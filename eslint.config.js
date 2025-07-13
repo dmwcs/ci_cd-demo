@@ -34,8 +34,8 @@ export default tseslint.config(
         'no-debugger': 'error',
         'prefer-const': 'error',
         'no-var': 'error',
-        'semi': ['error', 'always'],
-        'quotes': ['error', 'single'],
+        semi: ['error', 'always'],
+        quotes: ['error', 'single'],
       },
     },
     {
