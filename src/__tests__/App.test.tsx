@@ -10,7 +10,7 @@ describe('App', () => {
 
   it('displays initial count of 01', () => {
     render(<App />);
-    expect(screen.getByText('count is 0')).toBeInTheDocument();
+    expect(screen.getByText('count is 01')).toBeInTheDocument();
   });
 
   it('increments count when button is clicked', async () => {
