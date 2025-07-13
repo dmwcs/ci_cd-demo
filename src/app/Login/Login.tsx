@@ -15,7 +15,7 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
+    //User axios to fetch backend api to login
   };
 
   return (
@@ -26,7 +26,8 @@ const Login = () => {
         onSubmit={handleSubmit}
       >
         <h1 className='align-self-center fs-3 '>Welcome Back</h1>
-        <Form.Group controlId='username'>
+
+        <Form.Group controlId='username' className='px-3 mb-1'>
           <Form.Label>Username</Form.Label>
           <Form.Control
             type='text'
@@ -37,7 +38,7 @@ const Login = () => {
             }
           />
         </Form.Group>
-        <Form.Group controlId='password'>
+        <Form.Group controlId='password' className='px-3 mb-3'>
           <Form.Label>Password</Form.Label>
           <Form.Control
             type='password'
