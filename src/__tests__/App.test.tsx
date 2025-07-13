@@ -8,7 +8,7 @@ describe('App', () => {
     expect(screen.getByText('Vite + React')).toBeInTheDocument();
   });
 
-  it('displays initial count of 0', () => {
+  it('displays initial count of 01', () => {
     render(<App />);
     expect(screen.getByText('count is 0')).toBeInTheDocument();
   });
