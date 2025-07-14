@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router';
 import Login from './app/Login';
-import PumpList from './app/PumpList';
+import PumpList from './app/PumpPage';
 import Navbar from './app/components/Navbar';
 import ProtectedRoute from './app/components/ProtectedRouter';
 import 'bootstrap/dist/css/bootstrap.min.css';

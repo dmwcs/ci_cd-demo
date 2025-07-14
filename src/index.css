@@ -9,3 +9,7 @@ body {
 ::placeholder {
   color: #6c757d !important;
 }
+
+.no-caret.dropdown-toggle::after {
+  display: none !important;
+}

@@ -1,18 +1,33 @@
-const PumpList = () => {
+import { Container } from 'react-bootstrap';
+import PumpsHeader from './components/PumpsHeader';
+import PumpsTable from './components/PumpsTable';
+
+// 示例数据
+const samplePumps = [
+  {
+    id: '1',
+    name: 'Pump Alpha',
+    status: 'active',
+  },
+  {
+    id: '2',
+    name: 'Pump Beta',
+    status: 'inactive',
+  },
+  {
+    id: '3',
+    name: 'Pump Gamma',
+    status: 'active',
+  },
+];
+
+const PumpPage = () => {
   return (
-    <div className='container mt-4'>
-      <h2>Pump Management</h2>
-      <div className='row'>
-        <div className='col-12'>
-          <p>
-            Welcome to the pump management system. Here you can view and manage
-            all your pumps.
-          </p>
-          {/* 这里可以添加实际的 pump 列表 */}
-        </div>
-      </div>
-    </div>
+    <Container className='py-4'>
+      <PumpsHeader />
+      <PumpsTable pumps={samplePumps} />
+    </Container>
   );
 };
 
-export default PumpList;
+export default PumpPage;
