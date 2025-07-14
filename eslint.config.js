@@ -1,7 +1,6 @@
 import js from '@eslint/js';
 import globals from 'globals';
 import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
@@ -12,7 +11,6 @@ export default tseslint.config(
         js.configs.recommended,
         tseslint.configs.recommended,
         reactHooks.configs['recommended-latest'],
-        reactRefresh.configs.vite,
       ],
       languageOptions: {
         ecmaVersion: 2020,
@@ -21,7 +19,7 @@ export default tseslint.config(
           ...globals.es2020,
         },
         parserOptions: {
-          project: ['./tsconfig.app.json'],
+          project: ['./tsconfig.json'],
           tsconfigRootDir: import.meta.dirname,
           ecmaFeatures: {
             jsx: true,
@@ -43,7 +41,6 @@ export default tseslint.config(
       extends: [
         js.configs.recommended,
         reactHooks.configs['recommended-latest'],
-        reactRefresh.configs.vite,
       ],
       languageOptions: {
         ecmaVersion: 2020,

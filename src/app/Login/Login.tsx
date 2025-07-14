@@ -15,7 +15,7 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    //User axios to fetch backend api to login
+    //axios.post
   };
 
   return (
