@@ -7,7 +7,10 @@ interface PumpsTableRowProps {
 }
 
 const PumpsTableRow: React.FC<PumpsTableRowProps> = ({ pump }) => {
-  const { min, max, current } = getPressureStats(pump.pressure);
+  const stats = getPressureStats(pump.pressure);
+  const min = stats?.min ?? '-';
+  const max = stats?.max ?? '-';
+  const current = stats?.current ?? '-';
 
   const cellData = [
     pump.name,

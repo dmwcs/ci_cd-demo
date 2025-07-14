@@ -2,7 +2,11 @@ import React from 'react';
 import { Button, ButtonGroup, Container, Dropdown } from 'react-bootstrap';
 import { TbSearch, TbFilter, TbEdit, TbTrash } from 'react-icons/tb';
 
-const PumpsHeader: React.FC = () => {
+interface PumpsHeaderProps {
+  onDropdownSelect?: (eventKey: string | null) => void;
+}
+
+const PumpsHeader: React.FC<PumpsHeaderProps> = ({ onDropdownSelect }) => {
   return (
     <Container fluid className='px-0'>
       <div className='d-flex justify-content-between align-items-center'>
@@ -21,7 +25,7 @@ const PumpsHeader: React.FC = () => {
           >
             <TbSearch size={22} />
           </Button>
-          <Dropdown as={ButtonGroup}>
+          <Dropdown as={ButtonGroup} onSelect={onDropdownSelect}>
             <Dropdown.Toggle
               variant='outline-light'
               className='no-caret  border-0'
@@ -29,8 +33,14 @@ const PumpsHeader: React.FC = () => {
               <TbFilter color='black' size={22} />
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item eventKey='1'>Dropdown link</Dropdown.Item>
-              <Dropdown.Item eventKey='2'>Dropdown link</Dropdown.Item>
+              <Dropdown.Item eventKey='name-asc'>Pump Name A-Z</Dropdown.Item>
+              <Dropdown.Item eventKey='name-desc'>Pump Name Z-A</Dropdown.Item>
+              <Dropdown.Item eventKey='pressure-asc'>
+                Current Pressure ↑
+              </Dropdown.Item>
+              <Dropdown.Item eventKey='pressure-desc'>
+                Current Pressure ↓
+              </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
 
