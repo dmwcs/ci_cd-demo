@@ -2,7 +2,7 @@ import { Button, Form, InputGroup, Dropdown } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import BootstrapNavbar from 'react-bootstrap/Navbar';
-import { Outlet, useNavigate, Link } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 import { PiBellBold } from 'react-icons/pi';
 import { TbZoom } from 'react-icons/tb';
 import { PiStarFourFill } from 'react-icons/pi';
@@ -19,49 +19,50 @@ const Navbar = () => {
 
   return (
     <div>
-      <BootstrapNavbar expand='md' className='border-bottom'>
-        <Container
-          fluid
-          style={{ display: 'flex', columnGap: '6px' }}
-          className='px-5'
-        >
-          <BootstrapNavbar.Brand href='#home'>
+      <BootstrapNavbar
+        expand='md'
+        className='border-bottom fixed-top bg-white'
+        style={{ zIndex: 9999 }}
+      >
+        <Container fluid className='px-5 d-flex gap-1'>
+          <BootstrapNavbar.Brand href='/'>
             <PiStarFourFill size={10} /> PumpMaster
           </BootstrapNavbar.Brand>
           <BootstrapNavbar.Toggle aria-controls='navbarScroll' />
           <BootstrapNavbar.Collapse id='navbarScroll'>
             <Nav className='my-lg-0' navbarScroll>
-              <Nav.Link as={Link} to='/pump'>
-                Pumps
-              </Nav.Link>
+              <Nav.Link>Dashboard</Nav.Link>
+              <Nav.Link className='text-dark fw-bold'>Pumps</Nav.Link>
+              <Nav.Link>Reports</Nav.Link>
+              <Nav.Link>Alerts</Nav.Link>
             </Nav>
           </BootstrapNavbar.Collapse>
 
           <div className='d-flex gap-4 d-none d-md-flex align-items-center'>
-            <InputGroup
-              className='bg-light rounded'
-              style={{ maxWidth: '250px' }}
-            >
-              <InputGroup.Text className='bg-light border-0'>
-                <TbZoom className='text-secondary' size={20} />
-              </InputGroup.Text>
-              <Form.Control
-                type='text'
-                placeholder='Search'
-                className='border-0 bg-light px-0'
-              />
-            </InputGroup>
-            <Button className='text-center bg-light border-0'>
-              <PiBellBold color='black' size={18} />
-            </Button>
+            {isAuthenticated && (
+              <>
+                <InputGroup className='bg-light rounded w-auto d-none d-lg-flex'>
+                  <InputGroup.Text className='bg-light border-0'>
+                    <TbZoom className='text-secondary' size={20} />
+                  </InputGroup.Text>
+                  <Form.Control
+                    type='text'
+                    placeholder='Search'
+                    className='border-0 bg-light pl-1'
+                  />
+                </InputGroup>
+                <Button className='text-center bg-light border-0'>
+                  <PiBellBold color='black' size={18} />
+                </Button>
+              </>
+            )}
 
-            {/* 用户信息和退出功能 */}
             {isAuthenticated && user && (
               <Dropdown align='end'>
                 <Dropdown.Toggle
                   as='div'
-                  className='d-flex align-items-center'
-                  style={{ cursor: 'pointer' }}
+                  className='d-flex align-items-center user-select-none'
+                  role='button'
                 >
                   <img
                     src='https://i.pravatar.cc/40?img=2'
@@ -75,9 +76,7 @@ const Navbar = () => {
 
                 <Dropdown.Menu>
                   <Dropdown.Item disabled>
-                    <small className='text-muted'>
-                      Logged in as: {user.username}
-                    </small>
+                    <small>Logged in as: {user.username}</small>
                   </Dropdown.Item>
                   <Dropdown.Divider />
                   <Dropdown.Item href='#profile'>Profile</Dropdown.Item>
@@ -92,7 +91,7 @@ const Navbar = () => {
           </div>
         </Container>
       </BootstrapNavbar>
-      <main>
+      <main className='pt-5 mt-2'>
         <Outlet />
       </main>
     </div>

@@ -7,22 +7,18 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
-    <Routes>
-      <Route path='/login' element={<Login />} />
+    <>
+      <Navbar />
+      <Routes>
+        <Route path='/login' element={<Login />} />
 
-      <Route
-        path='/pump'
-        element={
-          <ProtectedRoute>
-            <Navbar />
-          </ProtectedRoute>
-        }
-      >
-        <Route index element={<PumpList />} />
-      </Route>
+        <Route path='/pump' element={<ProtectedRoute />}>
+          <Route index element={<PumpList />} />
+        </Route>
 
-      <Route path='*' element={<Navigate to='/pump' replace />} />
-    </Routes>
+        <Route path='*' element={<Navigate to='/pump' replace />} />
+      </Routes>
+    </>
   );
 }
 
