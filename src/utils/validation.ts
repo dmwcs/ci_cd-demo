@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// 登录表单验证架构
 export const loginFormSchema = z.object({
   username: z
     .string()
@@ -14,5 +13,4 @@ export const loginFormSchema = z.object({
     .max(100, 'Password must not exceed 100 characters'),
 });
 
-// 导出类型
 export type LoginFormData = z.infer<typeof loginFormSchema>;
