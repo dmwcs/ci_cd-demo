@@ -9,7 +9,7 @@ on:
 jobs:
   ci_job:
     runs-on: ubuntu-latest
-    name: Run CI Tasks
+    name: ci_job
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
