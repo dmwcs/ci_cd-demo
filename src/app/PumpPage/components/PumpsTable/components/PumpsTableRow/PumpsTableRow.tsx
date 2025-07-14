@@ -1,11 +1,14 @@
 import React from 'react';
 import type { Pump } from '../../../../../../types';
+import { getPressureStats } from '../../../../../../utils/pressureStats';
 
 interface PumpsTableRowProps {
   pump: Pump;
 }
 
 const PumpsTableRow: React.FC<PumpsTableRowProps> = ({ pump }) => {
+  const { min, max, current } = getPressureStats(pump.pressure);
+
   const cellData = [
     pump.name,
     pump.type,
@@ -13,10 +16,10 @@ const PumpsTableRow: React.FC<PumpsTableRowProps> = ({ pump }) => {
     pump.location.latitude,
     pump.location.longitude,
     `${pump.flowRate} GPM`,
-    pump.offset,
-    `${pump.pressure.current} psi`,
-    `${pump.pressure.min} psi`,
-    `${pump.pressure.max} psi`,
+    `${pump.offset} sec`,
+    `${current} psi`,
+    `${min} psi`,
+    `${max} psi`,
   ];
 
   return (

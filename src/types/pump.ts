@@ -10,13 +10,13 @@ export interface Pump {
   };
   flowRate: number; // GPM
   offset: number; // seconds
-  pressure: {
-    current: number; // psi
-    min: number; // psi
-    max: number; // psi
-  };
+  pressure: Array<{
+    timestamp: Date;
+    pressure: number; // psi
+  }>;
   status: 'Operational' | 'Maintenance' | 'Offline' | 'Error';
-  lastUpdated: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface PumpFormData {
