@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router';
+import { Link, Navigate } from 'react-router';
 import { Alert, Button, Form, Spinner } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -8,7 +8,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { mockFetchData } from '../../utils/mockDataFetch';
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
   const {
@@ -19,6 +19,11 @@ const Login = () => {
     resolver: zodResolver(loginFormSchema),
     mode: 'onChange',
   });
+
+  // 如果已登录，直接重定向到根路径
+  if (isAuthenticated) {
+    return <Navigate to='/pump' replace />;
+  }
 
   const onSubmit = async (data: LoginFormData) => {
     try {
