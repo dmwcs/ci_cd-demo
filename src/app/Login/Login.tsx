@@ -59,7 +59,8 @@ const Login = () => {
         <Button
           type='submit'
           disabled={isSubmitting}
-          className='d-flex align-items-center justify-content-center'
+          className='d-flex align-items-center justify-content-center mx-3 mx-sm-0'
+          // style={{ width: '400px' }}
         >
           {isSubmitting ? (
             <>
