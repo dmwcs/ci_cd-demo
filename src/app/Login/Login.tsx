@@ -1,10 +1,16 @@
+import { useState } from 'react';
 import { Link } from 'react-router';
-import { Button, Form, Spinner } from 'react-bootstrap';
+import { Alert, Button, Form, Spinner } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginFormSchema, type LoginFormData } from '../../utils/validation';
+import { useAuth } from '../../hooks/useAuth';
+import { mockFetchData } from '../../utils/mockDataFetch';
 
 const Login = () => {
+  const { login } = useAuth();
+  const [error, setError] = useState<string | null>(null);
+
   const {
     register,
     handleSubmit,
@@ -15,9 +21,27 @@ const Login = () => {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    console.log('表单数据:', data);
+    try {
+      setError(null);
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await mockFetchData('/login', {
+        username: data.username,
+        password: data.password,
+      });
+
+      if (!response?.token || !response?.user) {
+        throw new Error('login in unsuccess');
+      }
+
+      const { token, user } = response;
+
+      login({
+        token,
+        username: user,
+      });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'there is something wrong');
+    }
   };
 
   return (
@@ -30,6 +54,12 @@ const Login = () => {
       >
         <h1 className='align-self-center fs-3 '>Welcome Back</h1>
 
+        {error && (
+          <Alert variant='danger' className='mx-3'>
+            {error}
+          </Alert>
+        )}
+
         <Form.Group controlId='username' className='px-3 mb-1'>
           <Form.Label>Username</Form.Label>
           <Form.Control
@@ -37,6 +67,7 @@ const Login = () => {
             placeholder='Enter your username'
             {...register('username')}
             isInvalid={!!errors.username}
+            disabled={isSubmitting}
           />
           <Form.Control.Feedback type='invalid'>
             {errors.username?.message}
@@ -50,6 +81,7 @@ const Login = () => {
             placeholder='Enter your password'
             {...register('password')}
             isInvalid={!!errors.password}
+            disabled={isSubmitting}
           />
           <Form.Control.Feedback type='invalid'>
             {errors.password?.message}
@@ -60,7 +92,6 @@ const Login = () => {
           type='submit'
           disabled={isSubmitting}
           className='d-flex align-items-center justify-content-center mx-3 mx-sm-0'
-          // style={{ width: '400px' }}
         >
           {isSubmitting ? (
             <>

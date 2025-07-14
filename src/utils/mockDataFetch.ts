@@ -1,17 +1,16 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const mockFetchData = async (url: string, data?: any) => {
   if (url === '/login') {
-    return {
-      token: 'mocked-token',
-      user: { username: data.username },
-    };
-  }
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-  if (url === '/getUserList') {
-    return [
-      { id: 1, name: 'Alice' },
-      { id: 2, name: 'Bob' },
-    ];
+    if (data?.username !== 'admin' || data?.password !== '888888') {
+      throw new Error('Invalid username or password');
+    }
+
+    return {
+      token: 'mocked-token-admin',
+      user: data.username,
+    };
   }
 
   return null;
