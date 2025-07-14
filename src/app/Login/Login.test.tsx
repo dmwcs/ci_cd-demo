@@ -31,10 +31,12 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => (
 describe('Login Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    localStorage.clear();
   });
 
   describe('Rendering', () => {
