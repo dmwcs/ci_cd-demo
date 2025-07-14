@@ -27,7 +27,6 @@ export default tseslint.config(
         },
       },
       rules: {
-        // 只保留最基本的规则
         'no-console': 'warn',
         'no-debugger': 'error',
         'prefer-const': 'error',

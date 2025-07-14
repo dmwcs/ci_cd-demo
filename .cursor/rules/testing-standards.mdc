@@ -1,0 +1,67 @@
+# 测试标准和规范
+
+## 测试文件结构
+
+- 测试文件命名：`ComponentName.test.tsx`
+- 测试文件位置：与组件文件在同一目录
+- 参考示例：[Login.test.tsx](mdc:src/app/Login/Login.test.tsx)
+
+## 测试库配置
+
+- 使用 Vitest 作为测试运行器
+- 使用 Testing Library 进行组件测试
+- 测试配置：[setup.ts](mdc:src/test/setup.ts)
+
+## 测试覆盖范围
+
+- **渲染测试**: 组件正确渲染所有元素
+- **用户交互**: 表单输入、按钮点击等
+- **状态变化**: 组件状态更新
+- **Props 传递**: 正确接收和处理 props
+- **错误处理**: 异常情况处理
+
+## 测试模式
+
+```tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router';
+import ComponentName from './ComponentName';
+
+describe('ComponentName', () => {
+  test('renders correctly', () => {
+    render(
+      <MemoryRouter>
+        <ComponentName />
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByRole('heading')).toBeInTheDocument();
+  });
+
+  test('handles user interaction', async () => {
+    const user = userEvent.setup();
+    render(
+      <MemoryRouter>
+        <ComponentName />
+      </MemoryRouter>,
+    );
+
+    await user.click(screen.getByRole('button'));
+    // 验证交互结果
+  });
+});
+```
+
+## 测试运行
+
+- 开发模式：`npm run test`
+- 单次运行：`npm run test:run`
+- 覆盖率报告：`npm run test:cov`
+
+## 测试要求
+
+- 每个新组件必须有测试
+- 测试覆盖率应保持在合理水平
+- 测试应该模拟真实用户行为
+- 使用 MemoryRouter 包装需要路由的组件

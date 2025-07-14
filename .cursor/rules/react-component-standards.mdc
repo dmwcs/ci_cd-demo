@@ -1,0 +1,62 @@
+# React 组件开发标准
+
+## 组件结构规范
+
+- 使用函数组件 + TypeScript
+- 组件文件夹结构：`ComponentName/index.ts` + `ComponentName/ComponentName.tsx`
+- 导出方式：`export { default } from './ComponentName';`
+
+## 类型定义
+
+- 所有 Props 都要定义 TypeScript 接口
+- 使用 `React.FC` 类型或直接函数声明
+- 事件处理器使用正确的类型：`React.FormEvent`, `React.ChangeEvent` 等
+
+## 样式和 UI
+
+- 优先使用 React Bootstrap 组件
+- 使用 Bootstrap 类名进行样式控制
+- 保持响应式设计
+
+## 状态管理
+
+- 使用 `useState` 进行本地状态管理
+- 全局状态通过 Context API（如 useAuth）
+- 表单状态管理参考 [Login.tsx](mdc:src/app/Login/Login.tsx)
+
+## 测试要求
+
+- 每个组件必须有对应的测试文件
+- 测试文件命名：`ComponentName.test.tsx`
+- 使用 Testing Library 进行组件测试
+- 测试覆盖：渲染、用户交互、状态变化
+
+## 代码示例
+
+```tsx
+import React, { useState } from 'react';
+import { Button, Form } from 'react-bootstrap';
+
+interface ComponentProps {
+  title: string;
+  onSubmit: (data: FormData) => void;
+}
+
+const ComponentName: React.FC<ComponentProps> = ({ title, onSubmit }) => {
+  const [formData, setFormData] = useState<FormData>({});
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
+
+  return (
+    <Form onSubmit={handleSubmit}>
+      <h1>{title}</h1>
+      <Button type='submit'>Submit</Button>
+    </Form>
+  );
+};
+
+export default ComponentName;
+```
