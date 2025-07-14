@@ -1,32 +1,31 @@
 import React from 'react';
-
-interface Pump {
-  id: string;
-  name: string;
-  status: string;
-  // Add more pump properties as needed
-}
+import type { Pump } from '../../../../../../types';
 
 interface PumpsTableRowProps {
   pump: Pump;
 }
 
 const PumpsTableRow: React.FC<PumpsTableRowProps> = ({ pump }) => {
+  const cellData = [
+    pump.name,
+    pump.type,
+    pump.area,
+    pump.location.latitude,
+    pump.location.longitude,
+    `${pump.flowRate} GPM`,
+    pump.offset,
+    `${pump.pressure.current} psi`,
+    `${pump.pressure.min} psi`,
+    `${pump.pressure.max} psi`,
+  ];
+
   return (
     <tr>
-      <td>{pump.id}</td>
-      <td>{pump.name}</td>
-      <td>
-        <span
-          className={`badge ${pump.status === 'active' ? 'bg-success' : 'bg-danger'}`}
-        >
-          {pump.status}
-        </span>
-      </td>
-      <td>
-        <button className='btn btn-sm btn-outline-primary me-2'>Edit</button>
-        <button className='btn btn-sm btn-outline-danger'>Delete</button>
-      </td>
+      {cellData.map((data, index) => (
+        <td key={index} className='text-center border-end-0 py-3 px-2'>
+          {data}
+        </td>
+      ))}
     </tr>
   );
 };

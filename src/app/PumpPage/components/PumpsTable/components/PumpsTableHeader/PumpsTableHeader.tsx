@@ -1,13 +1,27 @@
 import React from 'react';
 
 const PumpsTableHeader: React.FC = () => {
+  const columns = [
+    'Pump Name',
+    'Type',
+    'Area/Block',
+    'Latitude',
+    'Longitude',
+    'Flow Rate',
+    'Offset',
+    'Current Pressure',
+    'Min Pressure',
+    'Max Pressure',
+  ];
+
   return (
-    <thead>
+    <thead className='table-light'>
       <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Status</th>
-        <th>Actions</th>
+        {columns.map((column, index) => (
+          <th key={index} scope='col' className='text-center'>
+            {column}
+          </th>
+        ))}
       </tr>
     </thead>
   );
