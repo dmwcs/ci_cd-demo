@@ -5,7 +5,7 @@ import SearchButton from './components/SearchButton';
 import EditButton from './components/EditButton';
 import FilterDropdown from './components/FilterDropdown';
 import { usePump } from '../../../../../../hooks/usePump';
-// import './PumpsControls.css';
+import './PumpsControls.css';
 
 const PumpsControls: React.FC = () => {
   const {
@@ -24,8 +24,8 @@ const PumpsControls: React.FC = () => {
   return (
     <>
       {/* Desktop Controls */}
-      <div className='pumps-controls-desktop d-none d-md-flex'>
-        <div className='pumps-controls-left'>
+      <div className='d-none d-md-flex justify-content-between align-items-center py-3 border'>
+        <div className='pumps-controls-left d-flex align-items-center position-relative'>
           <SearchButton onClick={handleSearchClick} />
 
           <div
@@ -61,7 +61,7 @@ const PumpsControls: React.FC = () => {
         </div>
         <Button
           variant={selectedPumps.size > 0 ? 'primary' : 'secondary'}
-          className='delete-button'
+          className='delete-button d-flex align-items-center gap-2 px-4'
           disabled={selectedPumps.size === 0}
           onClick={handleDeleteClick}
         >
@@ -71,9 +71,9 @@ const PumpsControls: React.FC = () => {
       </div>
 
       {/* Mobile Controls */}
-      <div className='pumps-controls-mobile  d-md-none d-block border'>
+      <div className='d-md-none d-block border'>
         {/* Search Bar */}
-        <div className='mobile-search-bar'>
+        <div>
           <InputGroup size='sm'>
             <Form.Control
               type='text'
@@ -94,7 +94,7 @@ const PumpsControls: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className='mobile-buttons-container d-flex justify-content-between gap-2'>
+        <div className='d-flex justify-content-between gap-2'>
           <FilterDropdown onSelect={handleDropdownSelect} />
           <EditButton onClick={handleEditClick} isEditMode={isEditMode} />
           <Button
