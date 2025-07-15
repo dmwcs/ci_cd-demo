@@ -16,7 +16,7 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({ onSelect, size }) => {
       as={ButtonGroup}
       onSelect={onSelect}
       onToggle={isOpen => setIsActive(isOpen)}
-      className='filter-dropdown flex-fill'
+      className='filter-dropdown border flex-fill'
     >
       <Dropdown.Toggle
         variant={isActive ? 'primary' : 'outline-light'}

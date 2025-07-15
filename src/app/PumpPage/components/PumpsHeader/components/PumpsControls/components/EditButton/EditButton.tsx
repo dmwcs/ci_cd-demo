@@ -17,7 +17,7 @@ const EditButton: React.FC<EditButtonProps> = ({
   return (
     <Button
       variant={isEditMode ? 'primary' : 'outline-light'}
-      className='flex-fill'
+      className='flex-fill border'
       size={size}
       onClick={onClick}
     >

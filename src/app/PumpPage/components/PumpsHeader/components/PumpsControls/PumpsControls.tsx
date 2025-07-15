@@ -24,7 +24,7 @@ const PumpsControls: React.FC = () => {
   return (
     <>
       {/* Desktop Controls */}
-      <div className='d-none d-md-flex justify-content-between align-items-center py-3 border'>
+      <div className='d-none d-md-flex justify-content-between align-items-center py-3'>
         <div className='pumps-controls-left d-flex align-items-center position-relative'>
           <SearchButton onClick={handleSearchClick} />
 
@@ -71,7 +71,7 @@ const PumpsControls: React.FC = () => {
       </div>
 
       {/* Mobile Controls */}
-      <div className='d-md-none d-block border'>
+      <div className='d-md-none d-block'>
         {/* Search Bar */}
         <div>
           <InputGroup size='sm'>
@@ -80,6 +80,7 @@ const PumpsControls: React.FC = () => {
               placeholder='Search pumps...'
               value={searchTerm}
               onChange={e => handleSearch(e.target.value)}
+              className='py-2 px-3'
             />
             {searchTerm && (
               <Button
@@ -94,7 +95,7 @@ const PumpsControls: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className='d-flex justify-content-between gap-2'>
+        <div className='d-flex justify-content-between gap-2 my-1'>
           <FilterDropdown onSelect={handleDropdownSelect} />
           <EditButton onClick={handleEditClick} isEditMode={isEditMode} />
           <Button
@@ -105,7 +106,7 @@ const PumpsControls: React.FC = () => {
           >
             <TbTrash size={18} color='black' />
             <span>
-              {selectedPumps.size > 0 ? `(${selectedPumps.size})` : ''}
+              {selectedPumps.size > 0 ? ` (${selectedPumps.size})` : ''}
             </span>
           </Button>
         </div>
