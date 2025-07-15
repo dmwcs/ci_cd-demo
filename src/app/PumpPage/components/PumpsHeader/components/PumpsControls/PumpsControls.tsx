@@ -10,8 +10,9 @@ import {
 import { TbTrash, TbX } from 'react-icons/tb';
 import SearchButton from './components/SearchButton';
 import EditButton from './components/EditButton';
-import { usePump } from '../../../../../../hooks/usePump';
 import FilterDropdown from './components/FilterDropdown';
+import { usePump } from '../../../../../../hooks/usePump';
+import './PumpsControls.css';
 
 const PumpsControls: React.FC = () => {
   const {
@@ -30,24 +31,12 @@ const PumpsControls: React.FC = () => {
   return (
     <>
       {/* Desktop Controls */}
-      <div className='d-none d-md-flex justify-content-between align-items-center py-3'>
-        <div className='d-flex align-items-center position-relative'>
+      <div className='pumps-controls-desktop'>
+        <div className='pumps-controls-left'>
           <SearchButton onClick={handleSearchClick} />
 
           <div
-            className='search-input-container'
-            style={{
-              position: 'absolute',
-              left: '48px',
-              top: '50%',
-              transform: `translateY(-50%) scale(${showSearch ? '1' : '0'})`,
-              transformOrigin: 'left center',
-              transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-              opacity: showSearch ? 1 : 0,
-              visibility: showSearch ? 'visible' : 'hidden',
-              width: '250px',
-              zIndex: 10,
-            }}
+            className={`search-input-container ${showSearch ? 'show' : 'hide'}`}
           >
             <InputGroup size='sm'>
               <Form.Control
@@ -56,10 +45,7 @@ const PumpsControls: React.FC = () => {
                 value={searchTerm}
                 onChange={e => handleSearch(e.target.value)}
                 autoFocus={showSearch}
-                style={{
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  border: '1px solid #dee2e6',
-                }}
+                className='search-input'
               />
               <Button
                 variant='outline-secondary'
@@ -72,10 +58,7 @@ const PumpsControls: React.FC = () => {
           </div>
 
           <div
-            style={{
-              marginLeft: showSearch ? '262px' : '0px',
-              transition: 'margin-left 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
-            }}
+            className={`button-group-container ${showSearch ? 'search-open' : 'search-closed'}`}
           >
             <ButtonGroup>
               <FilterDropdown onSelect={handleDropdownSelect} />
@@ -85,7 +68,7 @@ const PumpsControls: React.FC = () => {
         </div>
         <Button
           variant={selectedPumps.size > 0 ? 'primary' : 'secondary'}
-          className='d-flex align-items-center gap-2 px-4'
+          className='delete-button'
           disabled={selectedPumps.size === 0}
           onClick={handleDeleteClick}
         >
@@ -95,9 +78,9 @@ const PumpsControls: React.FC = () => {
       </div>
 
       {/* Mobile Controls */}
-      <div className='d-block d-md-none'>
+      <div className='pumps-controls-mobile'>
         {/* Search Bar */}
-        <div className='mb-3'>
+        <div className='mobile-search-bar'>
           <InputGroup size='sm'>
             <Form.Control
               type='text'
@@ -118,7 +101,7 @@ const PumpsControls: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <Row className='mobile-buttons-row gx-2 mb-3'>
+        <Row className='mobile-buttons-row gx-2'>
           <Col xs={4}>
             <FilterDropdown
               onSelect={handleDropdownSelect}
@@ -142,7 +125,7 @@ const PumpsControls: React.FC = () => {
               onClick={handleDeleteClick}
             >
               <TbTrash size={18} />
-              <span className='d-none d-sm-inline'>
+              <span className='mobile-delete-count'>
                 {selectedPumps.size > 0 ? `(${selectedPumps.size})` : ''}
               </span>
             </Button>

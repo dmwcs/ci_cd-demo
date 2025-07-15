@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import { TbSearch } from 'react-icons/tb';
+import './SearchButton.css';
 
 interface SearchButtonProps {
   onClick?: () => void;
@@ -10,7 +11,7 @@ const SearchButton: React.FC<SearchButtonProps> = ({ onClick }) => {
   return (
     <Button
       variant='outline-light'
-      className='text-muted border-0'
+      className='search-button'
       size='lg'
       onClick={onClick}
     >

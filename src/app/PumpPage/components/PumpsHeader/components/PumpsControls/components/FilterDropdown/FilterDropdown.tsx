@@ -1,6 +1,7 @@
 import React from 'react';
 import { ButtonGroup, Dropdown } from 'react-bootstrap';
 import { TbFilter } from 'react-icons/tb';
+import './FilterDropdown.css';
 
 interface FilterDropdownProps {
   onSelect?: (eventKey: string | null) => void;
@@ -17,9 +18,9 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({
     <Dropdown
       as={ButtonGroup}
       onSelect={onSelect}
-      className={`w-100 ${className || ''}`}
+      className={`filter-dropdown ${className || ''}`}
     >
-      <Dropdown.Toggle variant='outline-light' className='no-caret' size={size}>
+      <Dropdown.Toggle variant='outline-light' size={size}>
         <TbFilter color='black' size={18} />
       </Dropdown.Toggle>
       <Dropdown.Menu>

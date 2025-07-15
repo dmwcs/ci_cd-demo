@@ -3,7 +3,6 @@ import Login from './app/Login';
 import PumpList from './app/PumpPage';
 import Navbar from './app/components/Navbar';
 import ProtectedRoute from './app/components/ProtectedRouter';
-import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (

@@ -1,0 +1,15 @@
+.filter-dropdown {
+  width: 100%;
+}
+
+.filter-dropdown .dropdown-toggle {
+  border: 0;
+}
+
+.filter-dropdown .dropdown-toggle::after {
+  display: none;
+}
+
+.filter-dropdown .dropdown-toggle:focus {
+  box-shadow: none;
+}

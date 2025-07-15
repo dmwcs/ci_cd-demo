@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import { TbEdit, TbEditOff } from 'react-icons/tb';
+import './EditButton.css';
 
 interface EditButtonProps {
   onClick?: () => void;
@@ -18,7 +19,7 @@ const EditButton: React.FC<EditButtonProps> = ({
   return (
     <Button
       variant={isEditMode ? 'primary' : 'outline-light'}
-      className={`${isEditMode ? 'border-0' : 'text-muted border-0'} ${className || ''}`}
+      className={`edit-button ${isEditMode ? 'edit-mode' : 'normal-mode'} ${className || ''}`}
       size={size}
       onClick={onClick}
     >
