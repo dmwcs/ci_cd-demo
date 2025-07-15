@@ -51,6 +51,11 @@ interface PumpContextType {
 
   // Sorting methods for organizing pump data by name or pressure values
   handleDropdownSelect: (eventKey: string | null) => void;
+
+  // 新建水泵
+  createPump: (data: Omit<Pump, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  // 编辑水泵
+  updatePump: (id: string, data: Partial<Pump>) => void;
 }
 
 const PumpContext = createContext<PumpContextType | undefined>(undefined);
@@ -204,6 +209,36 @@ export const PumpProvider: React.FC<PropsWithChildren> = ({ children }) => {
     });
   };
 
+  const createPump = (data: Omit<Pump, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const newPump: Pump = {
+      ...data,
+      id: Date.now().toString(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    console.log('Creating new pump:', newPump);
+    setPumps(prev => {
+      const updated = [newPump, ...prev];
+      console.log('Updated pumps:', updated);
+      return updated;
+    });
+    setOriginalPumps(prev => [newPump, ...prev]);
+  };
+
+  const updatePump = (id: string, data: Partial<Pump>) => {
+    console.log('Updating pump:', id, data);
+    setPumps(prev =>
+      prev.map(p =>
+        p.id === id ? { ...p, ...data, updatedAt: new Date() } : p,
+      ),
+    );
+    setOriginalPumps(prev =>
+      prev.map(p =>
+        p.id === id ? { ...p, ...data, updatedAt: new Date() } : p,
+      ),
+    );
+  };
+
   const value: PumpContextType = {
     // Data state management for pumps list and loading status
     pumps,
@@ -233,6 +268,8 @@ export const PumpProvider: React.FC<PropsWithChildren> = ({ children }) => {
     handleConfirmDelete,
     handleCancelDelete,
     handleDropdownSelect,
+    createPump,
+    updatePump,
   };
 
   return <PumpContext.Provider value={value}>{children}</PumpContext.Provider>;

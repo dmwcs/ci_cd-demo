@@ -1,151 +1,214 @@
-import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Container, Form, Button, Row, Col, InputGroup } from 'react-bootstrap';
+import React, { useEffect } from 'react';
+import { Modal, Form, Button, InputGroup } from 'react-bootstrap';
+import { useForm } from 'react-hook-form';
 import type { Pump, PumpFormData } from '../../../../types';
 import { defaultPumps } from '../../../../utils/mockData';
+import { getPressureStats } from '../../../../utils/pressureStats';
+import { usePump } from '../../../../hooks/usePump';
 
-// Get unique values for dropdowns from mock data
 const pumpTypes = [...new Set(defaultPumps.map((p: Pump) => p.type))];
 const pumpAreas = [...new Set(defaultPumps.map((p: Pump) => p.area))];
 
-const EditPumpForm: React.FC = () => {
-  const { register, control, handleSubmit } = useForm<PumpFormData>();
+interface EditPumpModalProps {
+  show: boolean;
+  pump: Pump | null;
+  onClose: () => void;
+}
 
-  const onSubmit = (data: PumpFormData) => {
-    // For now, just log the data as requested
-    console.log(data);
+const EditPumpModal: React.FC<EditPumpModalProps> = ({
+  show,
+  pump,
+  onClose,
+}) => {
+  const { register, handleSubmit, reset } = useForm<PumpFormData>();
+  const { createPump, updatePump } = usePump();
+
+  useEffect(() => {
+    if (pump) {
+      const stats = getPressureStats(pump.pressure);
+      reset({
+        name: pump.name,
+        type: pump.type,
+        area: pump.area,
+        latitude: pump.location.latitude,
+        longitude: pump.location.longitude,
+        offset: pump.offset,
+        minPressure: stats.min,
+        maxPressure: stats.max,
+      });
+    } else {
+      reset({
+        name: '',
+        type: pumpTypes[0],
+        area: pumpAreas[0],
+        latitude: 0,
+        longitude: 0,
+        offset: 0,
+        minPressure: 0,
+        maxPressure: 0,
+      });
+    }
+  }, [pump, reset]);
+
+  const onSubmit = (data: PumpFormData, event?: React.BaseSyntheticEvent) => {
+    event?.preventDefault();
+    console.log('Form data:', data);
+
+    if (!pump) {
+      const newPumpData = {
+        name: data.name,
+        type: data.type,
+        area: data.area,
+        location: {
+          latitude: data.latitude,
+          longitude: data.longitude,
+        },
+        flowRate: 0,
+        offset: data.offset,
+        pressure: [],
+        status: 'Operational' as const,
+      };
+      console.log('Creating pump with data:', newPumpData);
+      createPump(newPumpData);
+    } else {
+      const updateData = {
+        name: data.name,
+        type: data.type,
+        area: data.area,
+        location: {
+          latitude: data.latitude,
+          longitude: data.longitude,
+        },
+        offset: data.offset,
+      };
+      console.log('Updating pump with data:', updateData);
+      updatePump(pump.id, updateData);
+    }
+    onClose();
   };
 
   return (
-    <Container fluid='sm' className='py-4'>
-      <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-        {/* Header from the image */}
-        <div className='text-center mb-4'>
-          <h2 className='h2 fw-bold'>Pump 12345</h2>
-          <p className='text-muted'>Pump ID: 12345</p>
-        </div>
+    <Modal show={show} onHide={onClose} centered size='lg' backdrop='static'>
+      <Modal.Header closeButton>
+        <Modal.Title>{pump ? 'Edit Pump' : 'New Pump'}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <div className='d-flex flex-column align-items-center py-4'>
+          <div style={{ maxWidth: '600px', width: '100%' }}>
+            <div className='d-flex flex-column align-items-center mb-4'>
+              <h2 className='h2 fw-bold'>{pump?.name || 'New Pump'}</h2>
+              {pump && <p className='text-muted'>Pump ID: {pump?.id || '-'}</p>}
+            </div>
+            <Form onSubmit={handleSubmit(onSubmit)} noValidate>
+              <div className='d-flex flex-column mb-3 w-100'>
+                <Form.Label htmlFor='pumpName'>Pump Name</Form.Label>
+                <Form.Control
+                  id='pumpName'
+                  type='text'
+                  className='bg-light'
+                  {...register('name')}
+                />
+              </div>
 
-        <Form onSubmit={handleSubmit(onSubmit)} noValidate>
-          {/* Pump Name */}
-          <Form.Group className='mb-3' controlId='pumpName'>
-            <Form.Label>Pump Name</Form.Label>
-            <Form.Control
-              type='text'
-              {...register('name')}
-              defaultValue='Pump 12345' // From image
-            />
-          </Form.Group>
-
-          {/* Pump Type */}
-          <Form.Group className='mb-3' controlId='pumpType'>
-            <Form.Label>Pump Type</Form.Label>
-            <Controller
-              name='type'
-              control={control}
-              defaultValue='Rotary' // From image
-              render={({ field }) => (
-                <Form.Select {...field}>
+              <div className='d-flex flex-column mb-3 w-100'>
+                <Form.Label htmlFor='pumpType'>Pump Type</Form.Label>
+                <Form.Select
+                  id='pumpType'
+                  className='bg-light'
+                  {...register('type')}
+                >
                   {pumpTypes.map(type => (
                     <option key={type} value={type}>
                       {type}
                     </option>
                   ))}
                 </Form.Select>
-              )}
-            />
-          </Form.Group>
+              </div>
 
-          {/* Area */}
-          <Form.Group className='mb-3' controlId='pumpArea'>
-            <Form.Label>Area</Form.Label>
-            <Controller
-              name='area'
-              control={control}
-              defaultValue='Area A' // From image
-              render={({ field }) => (
-                <Form.Select {...field}>
+              <div className='d-flex flex-column mb-3 w-100'>
+                <Form.Label htmlFor='pumpArea'>Area</Form.Label>
+                <Form.Select
+                  id='pumpArea'
+                  className='bg-light'
+                  {...register('area')}
+                >
                   {pumpAreas.map(area => (
                     <option key={area} value={area}>
                       {area}
                     </option>
                   ))}
                 </Form.Select>
-              )}
-            />
-          </Form.Group>
+              </div>
 
-          {/* Latitude / Longitude */}
-          <Row className='mb-3'>
-            <Form.Label>Latitude / Longitude</Form.Label>
-            <Col>
-              <Form.Control
-                type='number'
-                step='any'
-                {...register('latitude')}
-                defaultValue={34.0522} // From image
-              />
-            </Col>
-            <Col>
-              <Form.Control
-                type='number'
-                step='any'
-                {...register('longitude')}
-                defaultValue={-118.2437} // From image
-              />
-            </Col>
-          </Row>
+              <div className='d-flex flex-column mb-3 w-100'>
+                <Form.Label>Latitude / Longitude</Form.Label>
+                <div className='d-flex gap-2'>
+                  <Form.Control
+                    type='text'
+                    placeholder='Latitude'
+                    className='bg-light'
+                    {...register('latitude', { valueAsNumber: true })}
+                  />
+                  <Form.Control
+                    type='text'
+                    placeholder='Longitude'
+                    className='bg-light'
+                    {...register('longitude', { valueAsNumber: true })}
+                  />
+                </div>
+              </div>
 
-          {/* Offset */}
-          <Form.Group className='mb-3' controlId='pumpOffset'>
-            <Form.Label>Offset</Form.Label>
-            <InputGroup>
-              <Form.Control
-                type='number'
-                {...register('offset')}
-                defaultValue={3} // From image
-              />
-              <InputGroup.Text>sec</InputGroup.Text>
-            </InputGroup>
-          </Form.Group>
+              <div className='d-flex flex-column mb-3 w-100'>
+                <Form.Label htmlFor='pumpOffset'>Offset</Form.Label>
+                <InputGroup>
+                  <Form.Control
+                    id='pumpOffset'
+                    type='text'
+                    className='bg-light'
+                    {...register('offset', { valueAsNumber: true })}
+                  />
+                  <InputGroup.Text className='bg-light'>sec</InputGroup.Text>
+                </InputGroup>
+              </div>
 
-          {/* Pressure Min / Max */}
-          <Row className='mb-4'>
-            <Form.Label>Pressure Min / Max</Form.Label>
-            <Col>
-              <InputGroup>
-                <Form.Control
-                  type='number'
-                  {...register('minPressure')}
-                  defaultValue={120} // From image
-                />
-                <InputGroup.Text>psi</InputGroup.Text>
-              </InputGroup>
-            </Col>
-            <Col>
-              <InputGroup>
-                <Form.Control
-                  type='number'
-                  {...register('maxPressure')}
-                  defaultValue={180} // From image
-                />
-                <InputGroup.Text>psi</InputGroup.Text>
-              </InputGroup>
-            </Col>
-          </Row>
+              <div className='d-flex flex-column mb-4 w-100'>
+                <Form.Label>Pressure Min / Max</Form.Label>
+                <div className='d-flex gap-2'>
+                  <InputGroup className='flex-grow-1'>
+                    <Form.Control
+                      type='text'
+                      placeholder='Min Pressure'
+                      className='bg-light'
+                      {...register('minPressure', { valueAsNumber: true })}
+                    />
+                    <InputGroup.Text className='bg-light'>psi</InputGroup.Text>
+                  </InputGroup>
+                  <InputGroup className='flex-grow-1'>
+                    <Form.Control
+                      type='text'
+                      placeholder='Max Pressure'
+                      className='bg-light'
+                      {...register('maxPressure', { valueAsNumber: true })}
+                    />
+                    <InputGroup.Text className='bg-light'>psi</InputGroup.Text>
+                  </InputGroup>
+                </div>
+              </div>
 
-          {/* Buttons */}
-          <div className='d-flex justify-content-end gap-2'>
-            <Button variant='light' type='button'>
-              Cancel
-            </Button>
-            <Button variant='primary' type='submit'>
-              Save
-            </Button>
+              <div className='d-flex justify-content-end gap-2 w-100'>
+                <Button variant='light' type='button' onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button variant='primary' type='submit'>
+                  Save
+                </Button>
+              </div>
+            </Form>
           </div>
-        </Form>
-      </div>
-    </Container>
+        </div>
+      </Modal.Body>
+    </Modal>
   );
 };
 
-export default EditPumpForm;
+export default EditPumpModal;

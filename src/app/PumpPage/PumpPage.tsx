@@ -1,9 +1,12 @@
+import { useCallback, useState } from 'react';
 import { Container } from 'react-bootstrap';
 import PumpsHeader from './components/PumpsHeader';
 import PumpsTable from './components/PumpsTable';
 import PumpsPagination from './components/PumpsPagination';
 import ConfirmModal from './components/ConfirmModal';
+import EditPumpModal from './components/EditPumpForm';
 import { PumpProvider, usePump } from '../../hooks/usePump';
+import type { Pump } from '../../types';
 
 const PumpPageContent = () => {
   const {
@@ -15,6 +18,19 @@ const PumpPageContent = () => {
     handleConfirmDelete,
     handleCancelDelete,
   } = usePump();
+
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editingPump, setEditingPump] = useState<Pump | null>(null);
+
+  const handleOpenEditModal = useCallback((pump?: Pump) => {
+    setEditingPump(pump ?? null);
+    setShowEditModal(true);
+  }, []);
+
+  const handleCloseEditModal = useCallback(() => {
+    setShowEditModal(false);
+    setEditingPump(null);
+  }, []);
 
   if (loading) {
     return (
@@ -42,9 +58,15 @@ const PumpPageContent = () => {
 
   return (
     <Container className='py-4'>
-      <PumpsHeader />
-      <PumpsTable pumps={pumps} />
+      <PumpsHeader onNewPump={() => handleOpenEditModal()} />
+      <PumpsTable pumps={pumps} onEdit={handleOpenEditModal} />
       <PumpsPagination />
+
+      <EditPumpModal
+        show={showEditModal}
+        pump={editingPump}
+        onClose={handleCloseEditModal}
+      />
 
       <ConfirmModal
         show={showDeleteModal}

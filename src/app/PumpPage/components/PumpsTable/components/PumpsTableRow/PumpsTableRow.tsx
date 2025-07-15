@@ -9,6 +9,7 @@ interface PumpsTableRowProps {
   isEditMode?: boolean;
   isSelected?: boolean;
   onSelect?: (pumpId: string, isSelected: boolean) => void;
+  onEdit?: (pump: Pump) => void;
 }
 
 const PumpsTableRow: React.FC<PumpsTableRowProps> = ({
@@ -16,6 +17,7 @@ const PumpsTableRow: React.FC<PumpsTableRowProps> = ({
   isEditMode = false,
   isSelected = false,
   onSelect,
+  onEdit,
 }) => {
   const stats = getPressureStats(pump.pressure);
   const min = stats?.min ?? '-';
@@ -41,7 +43,7 @@ const PumpsTableRow: React.FC<PumpsTableRowProps> = ({
             <Button
               variant='outline-primary'
               size='sm'
-              onClick={() => console.log(`Edit pump ${pump.id}`)}
+              onClick={() => onEdit?.(pump)}
             >
               <TbEdit size={16} />
             </Button>

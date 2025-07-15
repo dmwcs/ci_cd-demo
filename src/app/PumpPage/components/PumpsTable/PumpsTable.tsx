@@ -9,6 +9,7 @@ import { getPressureStats } from '../../../../utils/pressureStats';
 
 interface PumpsTableProps {
   pumps?: Pump[];
+  onEdit?: (pump: Pump) => void;
 }
 
 const PumpCard: React.FC<{
@@ -16,7 +17,8 @@ const PumpCard: React.FC<{
   isEditMode: boolean;
   isSelected: boolean;
   onSelect: (pumpId: string, isSelected: boolean) => void;
-}> = ({ pump, isEditMode, isSelected, onSelect }) => {
+  onEdit?: (pump: Pump) => void;
+}> = ({ pump, isEditMode, isSelected, onSelect, onEdit }) => {
   const stats = getPressureStats(pump.pressure);
   const current = stats?.current ?? '-';
 
@@ -55,7 +57,7 @@ const PumpCard: React.FC<{
               <Button
                 variant='outline-primary'
                 size='sm'
-                onClick={() => console.log(`Edit pump ${pump.id}`)}
+                onClick={() => onEdit?.(pump)}
               >
                 <TbEdit size={16} />
               </Button>
@@ -67,7 +69,7 @@ const PumpCard: React.FC<{
   );
 };
 
-const PumpsTable: React.FC<PumpsTableProps> = ({ pumps = [] }) => {
+const PumpsTable: React.FC<PumpsTableProps> = ({ pumps = [], onEdit }) => {
   const { isEditMode, selectedPumps, handlePumpSelect, handleSelectAll } =
     usePump();
 
@@ -99,6 +101,7 @@ const PumpsTable: React.FC<PumpsTableProps> = ({ pumps = [] }) => {
                 isEditMode={isEditMode}
                 isSelected={selectedPumps.has(pump.id)}
                 onSelect={handlePumpSelect}
+                onEdit={onEdit}
               />
             ))}
           </tbody>
@@ -114,6 +117,7 @@ const PumpsTable: React.FC<PumpsTableProps> = ({ pumps = [] }) => {
             isEditMode={isEditMode}
             isSelected={selectedPumps.has(pump.id)}
             onSelect={handlePumpSelect}
+            onEdit={onEdit}
           />
         ))}
       </div>
