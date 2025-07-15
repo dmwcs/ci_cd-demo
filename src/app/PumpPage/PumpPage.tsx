@@ -4,7 +4,6 @@ import PumpsTable from './components/PumpsTable';
 import PumpsPagination from './components/PumpsPagination';
 import ConfirmModal from './components/ConfirmModal';
 import { PumpProvider, usePump } from '../../hooks/usePump';
-import './PumpPage.css';
 
 const PumpPageContent = () => {
   const {

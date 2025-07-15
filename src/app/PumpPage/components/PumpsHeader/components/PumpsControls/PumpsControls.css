@@ -1,15 +1,7 @@
-/* Desktop Controls */
 .pumps-controls-desktop {
-  display: none;
   justify-content: space-between;
   align-items: center;
   padding: 1rem 0;
-}
-
-@media (min-width: 768px) {
-  .pumps-controls-desktop {
-    display: flex;
-  }
 }
 
 .pumps-controls-left {
@@ -79,16 +71,18 @@
   margin-bottom: 1rem;
 }
 
-.mobile-buttons-row {
+.mobile-buttons-container {
+  display: flex;
+  gap: 0.5rem;
   margin-bottom: 1rem;
 }
 
 .mobile-action-btn {
-  width: 100%;
+  flex: 1;
 }
 
 .mobile-filter-dropdown {
-  width: 100%;
+  flex: 1;
 }
 
 .mobile-delete-count {

@@ -1,18 +1,11 @@
 import React from 'react';
-import {
-  Button,
-  ButtonGroup,
-  InputGroup,
-  Form,
-  Row,
-  Col,
-} from 'react-bootstrap';
+import { Button, ButtonGroup, InputGroup, Form } from 'react-bootstrap';
 import { TbTrash, TbX } from 'react-icons/tb';
 import SearchButton from './components/SearchButton';
 import EditButton from './components/EditButton';
 import FilterDropdown from './components/FilterDropdown';
 import { usePump } from '../../../../../../hooks/usePump';
-import './PumpsControls.css';
+// import './PumpsControls.css';
 
 const PumpsControls: React.FC = () => {
   const {
@@ -31,7 +24,7 @@ const PumpsControls: React.FC = () => {
   return (
     <>
       {/* Desktop Controls */}
-      <div className='pumps-controls-desktop'>
+      <div className='pumps-controls-desktop d-none d-md-flex'>
         <div className='pumps-controls-left'>
           <SearchButton onClick={handleSearchClick} />
 
@@ -78,7 +71,7 @@ const PumpsControls: React.FC = () => {
       </div>
 
       {/* Mobile Controls */}
-      <div className='pumps-controls-mobile'>
+      <div className='pumps-controls-mobile  d-md-none d-block border'>
         {/* Search Bar */}
         <div className='mobile-search-bar'>
           <InputGroup size='sm'>
@@ -101,36 +94,21 @@ const PumpsControls: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <Row className='mobile-buttons-row gx-2'>
-          <Col xs={4}>
-            <FilterDropdown
-              onSelect={handleDropdownSelect}
-              className='mobile-filter-dropdown'
-              size={undefined}
-            />
-          </Col>
-          <Col xs={4}>
-            <EditButton
-              onClick={handleEditClick}
-              isEditMode={isEditMode}
-              className='mobile-action-btn'
-              size={undefined}
-            />
-          </Col>
-          <Col xs={4}>
-            <Button
-              variant={selectedPumps.size > 0 ? 'danger' : 'outline-secondary'}
-              className='mobile-action-btn'
-              disabled={selectedPumps.size === 0}
-              onClick={handleDeleteClick}
-            >
-              <TbTrash size={18} />
-              <span className='mobile-delete-count'>
-                {selectedPumps.size > 0 ? `(${selectedPumps.size})` : ''}
-              </span>
-            </Button>
-          </Col>
-        </Row>
+        <div className='mobile-buttons-container d-flex justify-content-between gap-2'>
+          <FilterDropdown onSelect={handleDropdownSelect} />
+          <EditButton onClick={handleEditClick} isEditMode={isEditMode} />
+          <Button
+            variant={selectedPumps.size > 0 ? 'danger' : 'disable'}
+            disabled={selectedPumps.size === 0}
+            onClick={handleDeleteClick}
+            className='flex-fill border-light'
+          >
+            <TbTrash size={18} color='black' />
+            <span>
+              {selectedPumps.size > 0 ? `(${selectedPumps.size})` : ''}
+            </span>
+          </Button>
+        </div>
       </div>
     </>
   );
