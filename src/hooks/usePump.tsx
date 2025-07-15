@@ -34,6 +34,12 @@ interface PumpContextType {
   // Delete confirmation modal state for bulk deletion operations
   showDeleteModal: boolean;
 
+  // Pagination state for managing page navigation and data display
+  currentPage: number;
+  totalPages: number;
+  itemsPerPage: number;
+  paginatedPumps: Pump[];
+
   // Search methods for filtering and clearing pump data based on user input
   handleSearchClick: () => void;
   handleSearch: (term: string) => void;
@@ -48,6 +54,9 @@ interface PumpContextType {
   handleDeleteClick: () => void;
   handleConfirmDelete: () => void;
   handleCancelDelete: () => void;
+
+  // Pagination methods for page navigation
+  handlePageChange: (page: number) => void;
 
   // Sorting methods for organizing pump data by name or pressure values
   handleDropdownSelect: (eventKey: string | null) => void;
@@ -78,6 +87,15 @@ export const PumpProvider: React.FC<PropsWithChildren> = ({ children }) => {
   // Delete confirmation modal state for managing bulk deletion workflow
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  // Pagination state management for controlling page display and navigation
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  // Calculate pagination data based on current page and items per page
+  const totalPages = Math.ceil(pumps.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedPumps = pumps.slice(startIndex, startIndex + itemsPerPage);
+
   // Initialize pump data on component mount by fetching from API and setting up initial state
   useEffect(() => {
     const loadPumps = async () => {
@@ -97,9 +115,16 @@ export const PumpProvider: React.FC<PropsWithChildren> = ({ children }) => {
     loadPumps();
   }, []);
 
+  // Pagination method to handle page navigation
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   // Search method to filter pumps based on search term matching name, type, area, or location address
   const handleSearch = (term: string) => {
     setSearchTerm(term);
+    setCurrentPage(1); // Reset to first page when searching
+
     if (!term.trim()) {
       setPumps(originalPumps);
       return;
@@ -182,6 +207,7 @@ export const PumpProvider: React.FC<PropsWithChildren> = ({ children }) => {
   // Sorting method to organize pump data by name (alphabetical) or pressure values (numerical) in ascending or descending order
   const handleDropdownSelect = (eventKey: string | null) => {
     if (!eventKey) return;
+    setCurrentPage(1); // Reset to first page when sorting
 
     setPumps(prev => {
       const sorted = [...prev];
@@ -257,6 +283,12 @@ export const PumpProvider: React.FC<PropsWithChildren> = ({ children }) => {
     // Delete confirmation modal state for bulk deletion operations
     showDeleteModal,
 
+    // Pagination state for managing page navigation and data display
+    currentPage,
+    totalPages,
+    itemsPerPage,
+    paginatedPumps,
+
     // Methods for search, edit, delete, and sort operations
     handleSearchClick,
     handleSearch,
@@ -268,6 +300,7 @@ export const PumpProvider: React.FC<PropsWithChildren> = ({ children }) => {
     handleConfirmDelete,
     handleCancelDelete,
     handleDropdownSelect,
+    handlePageChange,
     createPump,
     updatePump,
   };

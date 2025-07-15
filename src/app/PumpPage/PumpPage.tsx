@@ -10,13 +10,16 @@ import type { Pump } from '../../types';
 
 const PumpPageContent = () => {
   const {
-    pumps,
+    paginatedPumps,
     loading,
     error,
     showDeleteModal,
     selectedPumps,
+    currentPage,
+    totalPages,
     handleConfirmDelete,
     handleCancelDelete,
+    handlePageChange,
   } = usePump();
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -59,8 +62,12 @@ const PumpPageContent = () => {
   return (
     <Container className='py-4'>
       <PumpsHeader onNewPump={() => handleOpenEditModal()} />
-      <PumpsTable pumps={pumps} onEdit={handleOpenEditModal} />
-      <PumpsPagination />
+      <PumpsTable pumps={paginatedPumps} onEdit={handleOpenEditModal} />
+      <PumpsPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
 
       <EditPumpModal
         show={showEditModal}
