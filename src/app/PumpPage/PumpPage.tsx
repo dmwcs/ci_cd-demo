@@ -2,7 +2,7 @@ import { Container } from 'react-bootstrap';
 import PumpsHeader from './components/PumpsHeader';
 import PumpsTable from './components/PumpsTable';
 import PumpsPagination from './components/PumpsPagination';
-import ConfirmModal from '../components/ConfirmModal';
+import ConfirmModal from './components/ConfirmModal';
 import { PumpProvider, usePump } from '../../hooks/usePump';
 import './PumpPage.css';
 
@@ -47,7 +47,6 @@ const PumpPageContent = () => {
       <PumpsTable pumps={pumps} />
       <PumpsPagination />
 
-      {/* 删除确认模态框 */}
       <ConfirmModal
         show={showDeleteModal}
         onHide={handleCancelDelete}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import './ConfirmModal.css';
 
 interface ConfirmModalProps {
   show: boolean;
@@ -24,30 +25,17 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
 }) => {
   return (
     <>
-      <style>
-        {`
-          .confirm-modal-backdrop {
-            z-index: 99998 !important;
-          }
-          .modal {
-            z-index: 99999 !important;
-          }
-        `}
-      </style>
       <Modal
         show={show}
         onHide={onHide}
         centered
-        style={{ zIndex: 99999 }} // 确保盖住 navbar (navbar 是 9999)
         backdrop='static'
         backdropClassName='confirm-modal-backdrop'
       >
         <Modal.Header closeButton>
           <Modal.Title>{title}</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          <div dangerouslySetInnerHTML={{ __html: message }} />
-        </Modal.Body>
+        <Modal.Body>{message}</Modal.Body>
         <Modal.Footer>
           <Button variant='secondary' onClick={onHide}>
             {cancelText}

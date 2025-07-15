@@ -1,77 +1,79 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  type PropsWithChildren,
+} from 'react';
+
 import type { Pump } from '../types';
 import { defaultPumps } from '../utils/mockData';
 import { getPressureStats } from '../utils/pressureStats';
 
-// 模拟API调用
+// Simulate API call to fetch pump data with a 1-second delay to mimic real network request
 const fetchPumps = async (): Promise<Pump[]> => {
   await new Promise(resolve => setTimeout(resolve, 1000));
   return defaultPumps;
 };
 
 interface PumpContextType {
-  // 数据状态
+  // Data state management for pumps list and loading status
   pumps: Pump[];
   originalPumps: Pump[];
   loading: boolean;
   error: string | null;
 
-  // 搜索相关
+  // Search functionality state for filtering pumps by name, type, area, or location
   showSearch: boolean;
   searchTerm: string;
 
-  // 编辑相关
+  // Edit mode state for bulk selection and editing operations
   isEditMode: boolean;
   selectedPumps: Set<string>;
 
-  // 删除相关
+  // Delete confirmation modal state for bulk deletion operations
   showDeleteModal: boolean;
 
-  // 搜索方法
+  // Search methods for filtering and clearing pump data based on user input
   handleSearchClick: () => void;
   handleSearch: (term: string) => void;
   clearSearch: () => void;
 
-  // 编辑方法
+  // Edit mode methods for bulk selection and managing edit state
   handleEditClick: () => void;
   handlePumpSelect: (pumpId: string, isSelected: boolean) => void;
   handleSelectAll: (isSelected: boolean) => void;
 
-  // 删除方法
+  // Delete methods for handling bulk deletion with confirmation modal
   handleDeleteClick: () => void;
   handleConfirmDelete: () => void;
   handleCancelDelete: () => void;
 
-  // 排序方法
+  // Sorting methods for organizing pump data by name or pressure values
   handleDropdownSelect: (eventKey: string | null) => void;
 }
 
 const PumpContext = createContext<PumpContextType | undefined>(undefined);
 
-interface PumpProviderProps {
-  children: ReactNode;
-}
-
-export const PumpProvider: React.FC<PumpProviderProps> = ({ children }) => {
-  // 数据状态
+export const PumpProvider: React.FC<PropsWithChildren> = ({ children }) => {
+  // Data state management for storing pump data, loading status, and error handling
   const [pumps, setPumps] = useState<Pump[]>([]);
   const [originalPumps, setOriginalPumps] = useState<Pump[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 搜索状态
+  // Search state management for controlling search UI visibility and storing search terms
   const [showSearch, setShowSearch] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // 编辑状态
+  // Edit mode state management for bulk selection functionality and edit operations
   const [isEditMode, setIsEditMode] = useState(false);
   const [selectedPumps, setSelectedPumps] = useState<Set<string>>(new Set());
 
-  // 删除状态
+  // Delete confirmation modal state for managing bulk deletion workflow
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // 初始化数据
+  // Initialize pump data on component mount by fetching from API and setting up initial state
   useEffect(() => {
     const loadPumps = async () => {
       try {
@@ -90,7 +92,7 @@ export const PumpProvider: React.FC<PumpProviderProps> = ({ children }) => {
     loadPumps();
   }, []);
 
-  // 搜索方法
+  // Search method to filter pumps based on search term matching name, type, area, or location address
   const handleSearch = (term: string) => {
     setSearchTerm(term);
     if (!term.trim()) {
@@ -108,12 +110,14 @@ export const PumpProvider: React.FC<PumpProviderProps> = ({ children }) => {
     setPumps(filteredPumps);
   };
 
+  // Clear search functionality by resetting search term, hiding search UI, and restoring original pump list
   const clearSearch = () => {
     setSearchTerm('');
     setShowSearch(false);
     setPumps(originalPumps);
   };
 
+  // Toggle search UI visibility and clear search when hiding the search interface
   const handleSearchClick = () => {
     setShowSearch(!showSearch);
     if (showSearch) {
@@ -121,7 +125,7 @@ export const PumpProvider: React.FC<PumpProviderProps> = ({ children }) => {
     }
   };
 
-  // 编辑方法
+  // Edit mode methods for managing bulk selection functionality and edit state transitions
   const handleEditClick = () => {
     setIsEditMode(!isEditMode);
     if (isEditMode) {
@@ -129,6 +133,7 @@ export const PumpProvider: React.FC<PumpProviderProps> = ({ children }) => {
     }
   };
 
+  // Handle individual pump selection by adding or removing pump ID from selected set
   const handlePumpSelect = (pumpId: string, isSelected: boolean) => {
     const newSelected = new Set(selectedPumps);
     if (isSelected) {
@@ -139,6 +144,7 @@ export const PumpProvider: React.FC<PumpProviderProps> = ({ children }) => {
     setSelectedPumps(newSelected);
   };
 
+  // Handle select all functionality by either selecting all visible pumps or clearing all selections
   const handleSelectAll = (isSelected: boolean) => {
     if (isSelected) {
       setSelectedPumps(new Set(pumps.map(pump => pump.id)));
@@ -147,13 +153,14 @@ export const PumpProvider: React.FC<PumpProviderProps> = ({ children }) => {
     }
   };
 
-  // 删除方法
+  // Delete methods for handling bulk deletion workflow with confirmation modal
   const handleDeleteClick = () => {
     if (selectedPumps.size > 0) {
       setShowDeleteModal(true);
     }
   };
 
+  // Confirm deletion by removing selected pumps from both current and original pump lists
   const handleConfirmDelete = () => {
     const updatedPumps = pumps.filter(pump => !selectedPumps.has(pump.id));
     setPumps(updatedPumps);
@@ -162,11 +169,12 @@ export const PumpProvider: React.FC<PumpProviderProps> = ({ children }) => {
     setShowDeleteModal(false);
   };
 
+  // Cancel deletion by simply hiding the confirmation modal without any data changes
   const handleCancelDelete = () => {
     setShowDeleteModal(false);
   };
 
-  // 排序方法
+  // Sorting method to organize pump data by name (alphabetical) or pressure values (numerical) in ascending or descending order
   const handleDropdownSelect = (eventKey: string | null) => {
     if (!eventKey) return;
 
@@ -197,24 +205,24 @@ export const PumpProvider: React.FC<PumpProviderProps> = ({ children }) => {
   };
 
   const value: PumpContextType = {
-    // 数据状态
+    // Data state management for pumps list and loading status
     pumps,
     originalPumps,
     loading,
     error,
 
-    // 搜索相关
+    // Search functionality state for filtering pumps by name, type, area, or location
     showSearch,
     searchTerm,
 
-    // 编辑相关
+    // Edit mode state for bulk selection and editing operations
     isEditMode,
     selectedPumps,
 
-    // 删除相关
+    // Delete confirmation modal state for bulk deletion operations
     showDeleteModal,
 
-    // 方法
+    // Methods for search, edit, delete, and sort operations
     handleSearchClick,
     handleSearch,
     clearSearch,
@@ -230,7 +238,6 @@ export const PumpProvider: React.FC<PumpProviderProps> = ({ children }) => {
   return <PumpContext.Provider value={value}>{children}</PumpContext.Provider>;
 };
 
-// 自定义 Hook
 export const usePump = () => {
   const context = useContext(PumpContext);
   if (context === undefined) {
