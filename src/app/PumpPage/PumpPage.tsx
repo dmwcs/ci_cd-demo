@@ -1,69 +1,21 @@
-import React, { useState, useEffect } from 'react';
 import { Container } from 'react-bootstrap';
-import { defaultPumps } from '../../utils/mockData';
-import type { Pump } from '../../types';
-import { getPressureStats } from '../../utils/pressureStats';
 import PumpsHeader from './components/PumpsHeader';
 import PumpsTable from './components/PumpsTable';
 import PumpsPagination from './components/PumpsPagination';
+import ConfirmModal from '../components/ConfirmModal';
+import { PumpProvider, usePump } from '../../hooks/usePump';
+import './PumpPage.css';
 
-// 模拟API调用
-const fetchPumps = async (): Promise<Pump[]> => {
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  return defaultPumps;
-};
-
-const PumpPage = () => {
-  const [pumps, setPumps] = useState<Pump[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadPumps = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchPumps();
-        setPumps(data);
-      } catch (err) {
-        setError('Failed to load pumps data');
-        console.error('Error fetching pumps:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadPumps();
-  }, []);
-
-  // 排序和菜单事件处理
-  const handleDropdownSelect = (eventKey: string | null) => {
-    if (!eventKey) return;
-
-    setPumps(prev => {
-      const sorted = [...prev];
-
-      switch (eventKey) {
-        case 'name-asc':
-          return sorted.sort((a, b) => a.name.localeCompare(b.name));
-        case 'name-desc':
-          return sorted.sort((a, b) => b.name.localeCompare(a.name));
-        case 'pressure-asc':
-          return sorted.sort((a, b) => {
-            const aStats = getPressureStats(a.pressure);
-            const bStats = getPressureStats(b.pressure);
-            return (aStats?.current || 0) - (bStats?.current || 0);
-          });
-        case 'pressure-desc':
-          return sorted.sort((a, b) => {
-            const aStats = getPressureStats(a.pressure);
-            const bStats = getPressureStats(b.pressure);
-            return (bStats?.current || 0) - (aStats?.current || 0);
-          });
-        default:
-          return sorted;
-      }
-    });
-  };
+const PumpPageContent = () => {
+  const {
+    pumps,
+    loading,
+    error,
+    showDeleteModal,
+    selectedPumps,
+    handleConfirmDelete,
+    handleCancelDelete,
+  } = usePump();
 
   if (loading) {
     return (
@@ -91,10 +43,30 @@ const PumpPage = () => {
 
   return (
     <Container className='py-4'>
-      <PumpsHeader onDropdownSelect={handleDropdownSelect} />
+      <PumpsHeader />
       <PumpsTable pumps={pumps} />
-      <PumpsPagination></PumpsPagination>
+      <PumpsPagination />
+
+      {/* 删除确认模态框 */}
+      <ConfirmModal
+        show={showDeleteModal}
+        onHide={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title='Confirm Delete'
+        message={`Are you sure you want to delete ${selectedPumps.size} selected pump${selectedPumps.size > 1 ? 's' : ''}?<br />This action cannot be undone.`}
+        confirmText='Confirm Delete'
+        cancelText='Cancel'
+        variant='danger'
+      />
     </Container>
+  );
+};
+
+const PumpPage = () => {
+  return (
+    <PumpProvider>
+      <PumpPageContent />
+    </PumpProvider>
   );
 };
 

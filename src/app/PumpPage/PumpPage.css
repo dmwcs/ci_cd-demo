@@ -1,0 +1,185 @@
+/* Mobile optimizations for Pump Page */
+
+/* Mobile Action Buttons - Uniform sizing and alignment */
+@media (max-width: 767.98px) {
+  /* Container row styling */
+  .mobile-buttons-row {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  /* All mobile action buttons - universal styling */
+  .mobile-action-btn,
+  .mobile-action-btn.btn {
+    height: 44px !important;
+    min-height: 44px !important;
+    max-height: 44px !important;
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0.5rem !important;
+    margin: 0 !important;
+    font-size: 1rem !important;
+    line-height: 1 !important;
+    border-radius: 0.375rem !important;
+    border: 1px solid #dee2e6 !important;
+    background-color: #f8f9fa !important;
+    color: #212529 !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+  }
+
+  /* Dropdown specific styling - minimal interference */
+  .mobile-action-btn.dropdown {
+    height: 44px !important;
+    width: 100% !important;
+  }
+
+  .mobile-action-btn.dropdown .btn-group {
+    width: 100% !important;
+    height: 44px !important;
+  }
+
+  /* Remove dropdown arrow only */
+  .mobile-action-btn .dropdown-toggle::after {
+    display: none !important;
+  }
+
+  /* Keep minimal sizing for dropdown toggle */
+  .mobile-action-btn .dropdown-toggle {
+    height: 44px !important;
+    width: 100% !important;
+  }
+
+  /* Mobile FilterDropdown specific styling */
+  .mobile-filter-dropdown {
+    height: 44px !important;
+    width: 100% !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 0.375rem !important;
+    background-color: #f8f9fa !important;
+  }
+
+  .mobile-filter-dropdown .btn-group {
+    width: 100% !important;
+    height: 44px !important;
+  }
+
+  .mobile-filter-dropdown .dropdown-toggle {
+    height: 44px !important;
+    width: 100% !important;
+    border: none !important;
+    background-color: transparent !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  .mobile-filter-dropdown .dropdown-toggle::after {
+    display: none !important;
+  }
+
+  /* Icon consistency */
+  .mobile-action-btn svg,
+  .mobile-action-btn .btn svg,
+  .mobile-action-btn .dropdown-toggle svg {
+    width: 18px !important;
+    height: 18px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Button state overrides */
+  .mobile-action-btn.btn-primary,
+  .mobile-action-btn .btn-primary {
+    background-color: #0d6efd !important;
+    border-color: #0d6efd !important;
+    color: white !important;
+  }
+
+  .mobile-action-btn.btn-danger,
+  .mobile-action-btn .btn-danger {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: white !important;
+  }
+
+  .mobile-action-btn.btn-outline-secondary,
+  .mobile-action-btn .btn-outline-secondary {
+    background-color: #f8f9fa !important;
+    border-color: #dee2e6 !important;
+    color: #6c757d !important;
+  }
+
+  .mobile-action-btn:disabled,
+  .mobile-action-btn.disabled,
+  .mobile-action-btn .btn:disabled {
+    background-color: #e9ecef !important;
+    border-color: #dee2e6 !important;
+    color: #6c757d !important;
+    opacity: 0.65 !important;
+  }
+
+  /* Remove focus/hover size changes for buttons */
+  .mobile-action-btn:focus,
+  .mobile-action-btn:hover,
+  .mobile-action-btn .btn:focus,
+  .mobile-action-btn .btn:hover {
+    transform: none !important;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+  }
+
+  /* Specific hover effect for dropdown container */
+  .mobile-action-btn.dropdown:hover {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25) !important;
+  }
+}
+
+/* Smaller text on mobile for pump cards */
+@media (max-width: 575.98px) {
+  .pump-card {
+    border-radius: 8px !important;
+  }
+
+  .pump-card .card-body {
+    padding: 0.75rem !important;
+  }
+
+  .pump-card h6 {
+    font-size: 0.9rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .pump-card small {
+    font-size: 0.7rem !important;
+  }
+
+  .pump-card .row div {
+    font-size: 0.8rem !important;
+    margin-bottom: 0.25rem;
+  }
+}
+
+/* Better touch targets for mobile */
+@media (max-width: 767.98px) {
+  .btn-sm {
+    min-height: 44px;
+  }
+
+  .form-check-input {
+    min-width: 20px;
+    min-height: 20px;
+  }
+}
+
+/* Hide unnecessary elements on very small screens */
+@media (max-width: 575.98px) {
+  .table-responsive {
+    border-radius: 8px !important;
+  }
+
+  /* Ensure cards don't get too crowded */
+  .pump-card .d-flex .flex-grow-1 .row {
+    row-gap: 0.25rem;
+  }
+}
