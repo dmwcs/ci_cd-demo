@@ -5,6 +5,7 @@ import type { Pump, PumpFormData } from '../../../../types';
 import { defaultPumps } from '../../../../utils/mockData';
 import { getPressureStats } from '../../../../utils/pressureStats';
 import { usePump } from '../../../../hooks/usePump';
+import './EditPumpForm.css';
 
 const pumpTypes = [...new Set(defaultPumps.map((p: Pump) => p.type))];
 const pumpAreas = [...new Set(defaultPumps.map((p: Pump) => p.area))];
@@ -88,7 +89,14 @@ const EditPumpModal: React.FC<EditPumpModalProps> = ({
   };
 
   return (
-    <Modal show={show} onHide={onClose} centered size='lg' backdrop='static'>
+    <Modal
+      show={show}
+      onHide={onClose}
+      centered
+      size='lg'
+      backdrop='static'
+      backdropClassName='edit-modal-backdrop'
+    >
       <Modal.Header closeButton>
         <Modal.Title>{pump ? 'Edit Pump' : 'New Pump'}</Modal.Title>
       </Modal.Header>

@@ -13,7 +13,7 @@ const PumpsHeader: React.FC<PumpsHeaderProps> = ({ onNewPump }) => {
         <h2 className='fw-bold mb-0'>Pumps</h2>
         <div>
           <Button
-            variant='secondary'
+            variant='light'
             className='d-none d-sm-block'
             style={{ width: '120px' }}
             onClick={onNewPump}
@@ -21,7 +21,7 @@ const PumpsHeader: React.FC<PumpsHeaderProps> = ({ onNewPump }) => {
             New Pump
           </Button>
           <Button
-            variant='secondary'
+            variant='light'
             size='sm'
             className='d-block d-sm-none'
             onClick={onNewPump}

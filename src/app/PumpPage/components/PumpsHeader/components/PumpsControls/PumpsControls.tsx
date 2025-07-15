@@ -54,7 +54,7 @@ const PumpsControls: React.FC = () => {
             className={`button-group-container ${showSearch ? 'search-open' : 'search-closed'}`}
           >
             <ButtonGroup>
-              <FilterDropdown onSelect={handleDropdownSelect} />
+              <FilterDropdown onSelect={handleDropdownSelect} size='lg' />
               <EditButton onClick={handleEditClick} isEditMode={isEditMode} />
             </ButtonGroup>
           </div>
@@ -95,18 +95,19 @@ const PumpsControls: React.FC = () => {
         </div>
 
         {/* Action Buttons */}
-        <div className='d-flex justify-content-between gap-2 my-1'>
+        <div className='d-flex gap-2 my-1'>
           <FilterDropdown onSelect={handleDropdownSelect} />
           <EditButton onClick={handleEditClick} isEditMode={isEditMode} />
           <Button
             variant={'primary'}
             disabled={selectedPumps.size === 0}
             onClick={handleDeleteClick}
-            className='flex-fill border-light'
+            className='border-light d-flex align-items-center justify-content-center'
+            style={{ flex: '1 1 0', minWidth: '0' }}
           >
             <TbTrash size={18} color='black' />
-            <span>
-              {selectedPumps.size > 0 ? ` (${selectedPumps.size})` : ''}
+            <span className='ms-1'>
+              {selectedPumps.size > 0 ? `(${selectedPumps.size})` : ''}
             </span>
           </Button>
         </div>
