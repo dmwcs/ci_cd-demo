@@ -60,7 +60,7 @@ const PumpsControls: React.FC = () => {
           </div>
         </div>
         <Button
-          variant={selectedPumps.size > 0 ? 'primary' : 'secondary'}
+          variant={'primary'}
           className='delete-button d-flex align-items-center gap-2 px-4'
           disabled={selectedPumps.size === 0}
           onClick={handleDeleteClick}
@@ -99,7 +99,7 @@ const PumpsControls: React.FC = () => {
           <FilterDropdown onSelect={handleDropdownSelect} />
           <EditButton onClick={handleEditClick} isEditMode={isEditMode} />
           <Button
-            variant={selectedPumps.size > 0 ? 'danger' : 'disable'}
+            variant={'primary'}
             disabled={selectedPumps.size === 0}
             onClick={handleDeleteClick}
             className='flex-fill border-light'

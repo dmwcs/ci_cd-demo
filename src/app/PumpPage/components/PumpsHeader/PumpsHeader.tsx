@@ -21,7 +21,6 @@ const PumpsHeader: React.FC = () => {
           </Button>
         </div>
       </div>
-
       <PumpsControls />
     </Container>
   );
