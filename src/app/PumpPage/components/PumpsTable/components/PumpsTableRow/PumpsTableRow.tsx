@@ -2,6 +2,7 @@ import React from 'react';
 import { Form, Button } from 'react-bootstrap';
 import { TbEdit } from 'react-icons/tb';
 import type { Pump } from '../../../../../../types';
+import { useNavigateToPump } from '../../../../../../hooks/useNavigation';
 import { getPressureStats } from '../../../../../../utils/pressureStats';
 
 interface PumpsTableRowProps {
@@ -19,6 +20,7 @@ const PumpsTableRow: React.FC<PumpsTableRowProps> = ({
   onSelect,
   onEdit,
 }) => {
+  const { handlePumpClick } = useNavigateToPump();
   const stats = getPressureStats(pump.pressure);
   const min = stats?.min ?? '-';
   const max = stats?.max ?? '-';
@@ -28,8 +30,14 @@ const PumpsTableRow: React.FC<PumpsTableRowProps> = ({
     onSelect?.(pump.id, e.target.checked);
   };
 
+  const handleRowClick = handlePumpClick(pump.id, isEditMode);
+
   return (
-    <tr>
+    <tr
+      onClick={handleRowClick}
+      style={{ cursor: isEditMode ? 'default' : 'pointer' }}
+      className={isEditMode ? '' : 'user-select-none'}
+    >
       {isEditMode && (
         <>
           <td className='text-center border-end-0 py-3 px-2'>

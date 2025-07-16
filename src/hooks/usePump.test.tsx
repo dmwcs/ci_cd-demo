@@ -2,14 +2,14 @@ import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import { usePump, PumpProvider } from './usePump';
 
-// 创建一个包装器组件
+// Create a wrapper component
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <PumpProvider>{children}</PumpProvider>
 );
 
 describe('usePump', () => {
   it('should throw error when used outside PumpProvider', () => {
-    // 在没有 Provider 的情况下测试 Hook
+    // Test Hook without Provider
     expect(() => {
       renderHook(() => usePump());
     }).toThrow('usePump must be used within a PumpProvider');
@@ -68,7 +68,7 @@ describe('usePump', () => {
   it('should manage pump selection', () => {
     const { result } = renderHook(() => usePump(), { wrapper });
 
-    // 选择一个泵
+    // Select a pump
     act(() => {
       result.current.handlePumpSelect('pump1', true);
     });
@@ -76,7 +76,7 @@ describe('usePump', () => {
     expect(result.current.selectedPumps.has('pump1')).toBe(true);
     expect(result.current.selectedPumps.size).toBe(1);
 
-    // 取消选择
+    // Deselect
     act(() => {
       result.current.handlePumpSelect('pump1', false);
     });
@@ -90,7 +90,7 @@ describe('usePump', () => {
 
     expect(result.current.showDeleteModal).toBe(false);
 
-    // 先选择一个泵，然后触发删除
+    // First select a pump, then trigger delete
     act(() => {
       result.current.handlePumpSelect('pump1', true);
     });
@@ -101,7 +101,7 @@ describe('usePump', () => {
 
     expect(result.current.showDeleteModal).toBe(true);
 
-    // 取消删除
+    // Cancel delete
     act(() => {
       result.current.handleCancelDelete();
     });
@@ -112,14 +112,14 @@ describe('usePump', () => {
   it('should handle search functionality', () => {
     const { result } = renderHook(() => usePump(), { wrapper });
 
-    // 测试搜索
+    // Test search
     act(() => {
       result.current.handleSearch('test search');
     });
 
     expect(result.current.searchTerm).toBe('test search');
 
-    // 清除搜索
+    // Clear search
     act(() => {
       result.current.clearSearch();
     });

@@ -20,7 +20,7 @@ const Login = () => {
     mode: 'onChange',
   });
 
-  // 如果已登录，直接重定向到根路径
+  // If already logged in, redirect to root path
   if (isAuthenticated) {
     return <Navigate to='/pump' replace />;
   }

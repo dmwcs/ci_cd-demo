@@ -15,12 +15,22 @@ const PumpsTableHeader: React.FC<PumpsTableHeaderProps> = ({
   pumps = [],
   onSelectAll,
 }) => {
-  const isAllSelected = pumps.length > 0 && selectedPumps.size === pumps.length;
+  // Check if current page is all selected
+  const currentPagePumpIds = pumps.map(pump => pump.id);
+  const selectedCurrentPagePumps = currentPagePumpIds.filter(id =>
+    selectedPumps.has(id),
+  );
+  const isAllSelected =
+    pumps.length > 0 && selectedCurrentPagePumps.length === pumps.length;
   const isIndeterminate =
-    selectedPumps.size > 0 && selectedPumps.size < pumps.length;
+    selectedCurrentPagePumps.length > 0 &&
+    selectedCurrentPagePumps.length < pumps.length;
 
-  const handleSelectAllChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onSelectAll?.(e.target.checked);
+  const handleSelectAllChange = () => {
+    // If currently all selected, clicking should deselect all
+    // If currently not all selected, clicking should select all
+    const shouldSelectAll = !isAllSelected;
+    onSelectAll?.(shouldSelectAll);
   };
 
   return (

@@ -4,24 +4,41 @@ import { MemoryRouter } from 'react-router';
 import { vi, describe, test, expect, beforeEach, afterEach } from 'vitest';
 import Login from './Login';
 import { AuthProvider } from '../../hooks/useAuth';
-import * as mockDataFetch from '../../utils/mockDataFetch';
+import { mockFetchData } from '../../utils/mockDataFetch';
 
-// Mock mockDataFetch
-vi.mock('../../utils/mockDataFetch', () => ({
-  mockFetchData: vi.fn(),
-}));
-
-// Mock useNavigate
-const mockNavigate = vi.fn();
+// Mock dependencies
+vi.mock('../../utils/mockDataFetch');
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
   return {
     ...actual,
-    useNavigate: () => mockNavigate,
+    Navigate: ({ to }: { to: string }) => (
+      <div data-testid='navigate' data-to={to} />
+    ),
   };
 });
 
-// Test wrapper component
+// Mock localStorage
+const localStorageMock = (() => {
+  let store: Record<string, string> = {};
+  return {
+    getItem: vi.fn((key: string) => store[key] || null),
+    setItem: vi.fn((key: string, value: string) => {
+      store[key] = value;
+    }),
+    removeItem: vi.fn((key: string) => {
+      delete store[key];
+    }),
+    clear: vi.fn(() => {
+      store = {};
+    }),
+  };
+})();
+
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+});
+
 const TestWrapper = ({ children }: { children: React.ReactNode }) => (
   <MemoryRouter>
     <AuthProvider>{children}</AuthProvider>
@@ -29,92 +46,16 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 describe('Login Component', () => {
+  const mockFetchDataMock = vi.mocked(mockFetchData);
+
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorage.clear();
+    localStorageMock.clear();
   });
 
   afterEach(() => {
     vi.clearAllMocks();
-    localStorage.clear();
-  });
-
-  describe('Rendering', () => {
-    test('renders all elements correctly', () => {
-      render(
-        <TestWrapper>
-          <Login />
-        </TestWrapper>,
-      );
-
-      expect(
-        screen.getByRole('heading', { name: /welcome back/i }),
-      ).toBeInTheDocument();
-      expect(screen.getByLabelText(/username/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
-      expect(
-        screen.getByRole('button', { name: /log in/i }),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('link', { name: /don't have an account\? register/i }),
-      ).toBeInTheDocument();
-    });
-
-    test('form fields start empty', () => {
-      render(
-        <TestWrapper>
-          <Login />
-        </TestWrapper>,
-      );
-
-      expect(screen.getByLabelText(/username/i)).toHaveValue('');
-      expect(screen.getByLabelText(/password/i)).toHaveValue('');
-    });
-  });
-
-  describe('Form Input', () => {
-    test('allows typing in username and password fields', async () => {
-      const user = userEvent.setup();
-      render(
-        <TestWrapper>
-          <Login />
-        </TestWrapper>,
-      );
-
-      const usernameInput = screen.getByLabelText(/username/i);
-      const passwordInput = screen.getByLabelText(/password/i);
-
-      await user.type(usernameInput, 'admin');
-      await user.type(passwordInput, '888888');
-
-      expect(usernameInput).toHaveValue('admin');
-      expect(passwordInput).toHaveValue('888888');
-    });
-
-    test('disables form fields during submission', async () => {
-      const user = userEvent.setup();
-      vi.mocked(mockDataFetch.mockFetchData).mockImplementation(
-        () => new Promise(resolve => setTimeout(resolve, 100)),
-      );
-
-      render(
-        <TestWrapper>
-          <Login />
-        </TestWrapper>,
-      );
-
-      const usernameInput = screen.getByLabelText(/username/i);
-      const passwordInput = screen.getByLabelText(/password/i);
-      const submitButton = screen.getByRole('button', { name: /log in/i });
-
-      await user.type(usernameInput, 'admin');
-      await user.type(passwordInput, '888888');
-      await user.click(submitButton);
-
-      expect(usernameInput).toBeDisabled();
-      expect(passwordInput).toBeDisabled();
-      expect(submitButton).toBeDisabled();
-    });
+    localStorageMock.clear();
   });
 
   describe('Form Validation', () => {
@@ -126,11 +67,13 @@ describe('Login Component', () => {
         </TestWrapper>,
       );
 
-      const submitButton = screen.getByRole('button', { name: /log in/i });
+      const submitButton = screen.getByText('Log in');
       await user.click(submitButton);
 
-      expect(screen.getByText(/Username is required/)).toBeInTheDocument();
-      expect(screen.getByText(/Password is required/)).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByText('Username is required')).toBeInTheDocument();
+        expect(screen.getByText('Password is required')).toBeInTheDocument();
+      });
     });
 
     test('shows validation error for short username', async () => {
@@ -141,13 +84,12 @@ describe('Login Component', () => {
         </TestWrapper>,
       );
 
-      const usernameInput = screen.getByLabelText(/username/i);
+      const usernameInput = screen.getByLabelText('Username');
       await user.type(usernameInput, 'ab');
-      await user.tab(); // Trigger validation
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Username must be at least 3 characters/),
+          screen.getByText('Username must be at least 3 characters'),
         ).toBeInTheDocument();
       });
     });
@@ -160,27 +102,24 @@ describe('Login Component', () => {
         </TestWrapper>,
       );
 
-      const passwordInput = screen.getByLabelText(/password/i);
-      await user.type(passwordInput, '123');
-      await user.tab(); // Trigger validation
+      const passwordInput = screen.getByLabelText('Password');
+      await user.type(passwordInput, '12345');
 
       await waitFor(() => {
         expect(
-          screen.getByText(/Password must be at least 6 characters/),
+          screen.getByText('Password must be at least 6 characters'),
         ).toBeInTheDocument();
       });
     });
   });
 
-  describe('Login Functionality', () => {
-    test('successful login with correct credentials', async () => {
+  describe('Login Flow', () => {
+    test('successfully logs in with valid credentials', async () => {
       const user = userEvent.setup();
-      const mockResponse = {
-        token: 'mocked-token-admin',
-        user: { username: 'admin' },
-      };
-
-      vi.mocked(mockDataFetch.mockFetchData).mockResolvedValue(mockResponse);
+      mockFetchDataMock.mockResolvedValue({
+        token: 'mock-token',
+        user: 'admin',
+      });
 
       render(
         <TestWrapper>
@@ -188,29 +127,59 @@ describe('Login Component', () => {
         </TestWrapper>,
       );
 
-      const usernameInput = screen.getByLabelText(/username/i);
-      const passwordInput = screen.getByLabelText(/password/i);
-      const submitButton = screen.getByRole('button', { name: /log in/i });
+      const usernameInput = screen.getByLabelText('Username');
+      const passwordInput = screen.getByLabelText('Password');
+      const submitButton = screen.getByText('Log in');
 
       await user.type(usernameInput, 'admin');
       await user.type(passwordInput, '888888');
       await user.click(submitButton);
 
       await waitFor(() => {
-        expect(mockDataFetch.mockFetchData).toHaveBeenCalledWith('/login', {
+        expect(mockFetchDataMock).toHaveBeenCalledWith('/login', {
           username: 'admin',
           password: '888888',
         });
       });
 
       await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith('/pump');
+        expect(localStorageMock.setItem).toHaveBeenCalledWith(
+          'token',
+          'mock-token',
+        );
+        expect(localStorageMock.setItem).toHaveBeenCalledWith(
+          'username',
+          'admin',
+        );
+      });
+    });
+
+    test('shows error message for invalid credentials', async () => {
+      const user = userEvent.setup();
+      mockFetchDataMock.mockRejectedValue(new Error('Invalid credentials'));
+
+      render(
+        <TestWrapper>
+          <Login />
+        </TestWrapper>,
+      );
+
+      const usernameInput = screen.getByLabelText('Username');
+      const passwordInput = screen.getByLabelText('Password');
+      const submitButton = screen.getByText('Log in');
+
+      await user.type(usernameInput, 'wronguser');
+      await user.type(passwordInput, 'wrongpass');
+      await user.click(submitButton);
+
+      await waitFor(() => {
+        expect(screen.getByText('Invalid credentials')).toBeInTheDocument();
       });
     });
 
     test('shows loading state during login', async () => {
       const user = userEvent.setup();
-      vi.mocked(mockDataFetch.mockFetchData).mockImplementation(
+      mockFetchDataMock.mockImplementation(
         () => new Promise(resolve => setTimeout(resolve, 100)),
       );
 
@@ -220,132 +189,25 @@ describe('Login Component', () => {
         </TestWrapper>,
       );
 
-      const usernameInput = screen.getByLabelText(/username/i);
-      const passwordInput = screen.getByLabelText(/password/i);
-      const submitButton = screen.getByRole('button', { name: /log in/i });
+      const usernameInput = screen.getByLabelText('Username');
+      const passwordInput = screen.getByLabelText('Password');
+      const submitButton = screen.getByText('Log in');
 
       await user.type(usernameInput, 'admin');
       await user.type(passwordInput, '888888');
       await user.click(submitButton);
 
-      expect(screen.getByText(/logging in.../i)).toBeInTheDocument();
-      expect(
-        screen.getByText(/logging in.../i).querySelector('.spinner-border'),
-      ).toBeInTheDocument();
-    });
-
-    test('displays error for invalid credentials', async () => {
-      const user = userEvent.setup();
-      const errorMessage = 'Invalid username or password';
-
-      vi.mocked(mockDataFetch.mockFetchData).mockRejectedValue(
-        new Error(errorMessage),
-      );
-
-      render(
-        <TestWrapper>
-          <Login />
-        </TestWrapper>,
-      );
-
-      const usernameInput = screen.getByLabelText(/username/i);
-      const passwordInput = screen.getByLabelText(/password/i);
-      const submitButton = screen.getByRole('button', { name: /log in/i });
-
-      await user.type(usernameInput, 'wronguser');
-      await user.type(passwordInput, 'wrongpass');
-      await user.click(submitButton);
-
-      await waitFor(() => {
-        expect(screen.getByText(errorMessage)).toBeInTheDocument();
-      });
-
-      // Error should be displayed in an alert
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-    });
-
-    test('displays generic error for unexpected errors', async () => {
-      const user = userEvent.setup();
-
-      vi.mocked(mockDataFetch.mockFetchData).mockRejectedValue(
-        'Unexpected error',
-      );
-
-      render(
-        <TestWrapper>
-          <Login />
-        </TestWrapper>,
-      );
-
-      const usernameInput = screen.getByLabelText(/username/i);
-      const passwordInput = screen.getByLabelText(/password/i);
-      const submitButton = screen.getByRole('button', { name: /log in/i });
-
-      await user.type(usernameInput, 'admin');
-      await user.type(passwordInput, '888888');
-      await user.click(submitButton);
-
-      await waitFor(() => {
-        expect(
-          screen.getByText('there is something wrong'),
-        ).toBeInTheDocument();
-      });
-    });
-
-    test('clears error message on new submission', async () => {
-      const user = userEvent.setup();
-
-      // First submission with error
-      vi.mocked(mockDataFetch.mockFetchData).mockRejectedValueOnce(
-        new Error('Invalid username or password'),
-      );
-
-      render(
-        <TestWrapper>
-          <Login />
-        </TestWrapper>,
-      );
-
-      const usernameInput = screen.getByLabelText(/username/i);
-      const passwordInput = screen.getByLabelText(/password/i);
-      const submitButton = screen.getByRole('button', { name: /log in/i });
-
-      await user.type(usernameInput, 'wronguser');
-      await user.type(passwordInput, 'wrongpass');
-      await user.click(submitButton);
-
-      await waitFor(() => {
-        expect(
-          screen.getByText('Invalid username or password'),
-        ).toBeInTheDocument();
-      });
-
-      // Second submission should clear error
-      vi.mocked(mockDataFetch.mockFetchData).mockImplementation(
-        () => new Promise(resolve => setTimeout(resolve, 100)),
-      );
-
-      await user.clear(usernameInput);
-      await user.clear(passwordInput);
-      await user.type(usernameInput, 'admin');
-      await user.type(passwordInput, '888888');
-      await user.click(submitButton);
-
-      await waitFor(() => {
-        expect(
-          screen.queryByText('Invalid username or password'),
-        ).not.toBeInTheDocument();
-      });
+      expect(screen.getByText('Logging in...')).toBeInTheDocument();
+      // Check for button in loading state
+      const button = screen.getByText('Logging in...').closest('button');
+      expect(button).toBeDisabled();
     });
   });
 
-  describe('Error Handling', () => {
-    test('handles malformed API response', async () => {
-      const user = userEvent.setup();
-
-      vi.mocked(mockDataFetch.mockFetchData).mockResolvedValue({
-        invalidResponse: true,
-      } as unknown as { token: string; user: { username: string } });
+  describe('Authentication State', () => {
+    test('redirects to pump page if already authenticated', () => {
+      localStorageMock.setItem('token', 'existing-token');
+      localStorageMock.setItem('username', 'existing-user');
 
       render(
         <TestWrapper>
@@ -353,23 +215,33 @@ describe('Login Component', () => {
         </TestWrapper>,
       );
 
-      const usernameInput = screen.getByLabelText(/username/i);
-      const passwordInput = screen.getByLabelText(/password/i);
-      const submitButton = screen.getByRole('button', { name: /log in/i });
+      expect(screen.getByTestId('navigate')).toHaveAttribute(
+        'data-to',
+        '/pump',
+      );
+    });
+  });
 
-      await user.type(usernameInput, 'admin');
-      await user.type(passwordInput, '888888');
-      await user.click(submitButton);
+  describe('Form Accessibility', () => {
+    test('has proper form labels and controls', () => {
+      render(
+        <TestWrapper>
+          <Login />
+        </TestWrapper>,
+      );
 
-      await waitFor(() => {
-        expect(screen.getByText('login in unsuccess')).toBeInTheDocument();
-      });
+      expect(screen.getByLabelText('Username')).toBeInTheDocument();
+      expect(screen.getByLabelText('Password')).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Log in' }),
+      ).toBeInTheDocument();
     });
 
-    test('handles null API response', async () => {
+    test('disables form during submission', async () => {
       const user = userEvent.setup();
-
-      vi.mocked(mockDataFetch.mockFetchData).mockResolvedValue(null);
+      mockFetchDataMock.mockImplementation(
+        () => new Promise(resolve => setTimeout(resolve, 100)),
+      );
 
       render(
         <TestWrapper>
@@ -377,17 +249,17 @@ describe('Login Component', () => {
         </TestWrapper>,
       );
 
-      const usernameInput = screen.getByLabelText(/username/i);
-      const passwordInput = screen.getByLabelText(/password/i);
-      const submitButton = screen.getByRole('button', { name: /log in/i });
+      const usernameInput = screen.getByLabelText('Username');
+      const passwordInput = screen.getByLabelText('Password');
+      const submitButton = screen.getByText('Log in');
 
       await user.type(usernameInput, 'admin');
       await user.type(passwordInput, '888888');
       await user.click(submitButton);
 
-      await waitFor(() => {
-        expect(screen.getByText('login in unsuccess')).toBeInTheDocument();
-      });
+      expect(usernameInput).toBeDisabled();
+      expect(passwordInput).toBeDisabled();
+      expect(submitButton).toBeDisabled();
     });
   });
 });

@@ -61,9 +61,9 @@ interface PumpContextType {
   // Sorting methods for organizing pump data by name or pressure values
   handleDropdownSelect: (eventKey: string | null) => void;
 
-  // 新建水泵
+  // Create new pump
   createPump: (data: Omit<Pump, 'id' | 'createdAt' | 'updatedAt'>) => void;
-  // 编辑水泵
+  // Edit pump
   updatePump: (id: string, data: Partial<Pump>) => void;
 }
 
@@ -177,9 +177,18 @@ export const PumpProvider: React.FC<PropsWithChildren> = ({ children }) => {
   // Handle select all functionality by either selecting all visible pumps or clearing all selections
   const handleSelectAll = (isSelected: boolean) => {
     if (isSelected) {
-      setSelectedPumps(new Set(pumps.map(pump => pump.id)));
+      // Select only pumps on current page
+      const currentPagePumpIds = paginatedPumps.map(pump => pump.id);
+      const newSelected = new Set(selectedPumps);
+      currentPagePumpIds.forEach(id => newSelected.add(id));
+      setSelectedPumps(newSelected);
     } else {
-      setSelectedPumps(new Set());
+      // Deselect pumps on current page
+      const currentPagePumpIds = new Set(paginatedPumps.map(pump => pump.id));
+      const newSelected = new Set(
+        [...selectedPumps].filter(id => !currentPagePumpIds.has(id)),
+      );
+      setSelectedPumps(newSelected);
     }
   };
 
