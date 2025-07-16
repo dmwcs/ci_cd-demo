@@ -24,7 +24,7 @@ const Navbar = () => {
         className='border-bottom fixed-top bg-white'
         style={{ zIndex: 9999 }}
       >
-        <Container fluid className='px-5 d-flex gap-1'>
+        <Container className='d-flex gap-1'>
           <BootstrapNavbar.Brand href='/'>
             <PiStarFourFill size={10} /> PumpMaster
           </BootstrapNavbar.Brand>

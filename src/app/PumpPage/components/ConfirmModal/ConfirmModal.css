@@ -1,0 +1,7 @@
+.confirm-modal-backdrop {
+  z-index: 99998 !important;
+}
+
+.modal {
+  z-index: 99999 !important;
+}
