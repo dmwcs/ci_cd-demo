@@ -2,7 +2,7 @@ import { Button, Form, InputGroup, Dropdown } from 'react-bootstrap';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import BootstrapNavbar from 'react-bootstrap/Navbar';
-import { Outlet, useNavigate } from 'react-router';
+import { Outlet, useNavigate, useLocation } from 'react-router';
 import { PiBellBold } from 'react-icons/pi';
 import { TbZoom } from 'react-icons/tb';
 import { PiStarFourFill } from 'react-icons/pi';
@@ -11,6 +11,9 @@ import { useAuth } from '../../../hooks/useAuth';
 const Navbar = () => {
   const { user, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const isLoginPage = location.pathname === '/login';
 
   const handleLogout = () => {
     logout();
@@ -29,14 +32,16 @@ const Navbar = () => {
             <PiStarFourFill size={10} /> PumpMaster
           </BootstrapNavbar.Brand>
           <BootstrapNavbar.Toggle aria-controls='navbarScroll' />
-          <BootstrapNavbar.Collapse id='navbarScroll'>
-            <Nav className='my-lg-0' navbarScroll>
-              <Nav.Link>Dashboard</Nav.Link>
-              <Nav.Link className='text-dark fw-bold'>Pumps</Nav.Link>
-              <Nav.Link>Reports</Nav.Link>
-              <Nav.Link>Alerts</Nav.Link>
-            </Nav>
-          </BootstrapNavbar.Collapse>
+          {!isLoginPage && (
+            <BootstrapNavbar.Collapse id='navbarScroll'>
+              <Nav className='my-lg-0' navbarScroll>
+                <Nav.Link>Dashboard</Nav.Link>
+                <Nav.Link className='text-dark fw-bold'>Pumps</Nav.Link>
+                <Nav.Link>Reports</Nav.Link>
+                <Nav.Link>Alerts</Nav.Link>
+              </Nav>
+            </BootstrapNavbar.Collapse>
+          )}
 
           <div className='d-flex gap-4 d-none d-md-flex align-items-center'>
             {isAuthenticated && (
