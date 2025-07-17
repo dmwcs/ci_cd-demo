@@ -1,4 +1,4 @@
-# InformAG Technical Assessment – Pump Management System
+# Pump Management System Demo
 
 ## Description
 
@@ -36,7 +36,7 @@ A demo pump management system for agricultural scenarios, built with React, Type
    - Username: `admin`
    - Password: `888888`
 
-## Technical Assessment Responses
+## System Design Overview
 
 ### Assumptions and Dependencies
 
